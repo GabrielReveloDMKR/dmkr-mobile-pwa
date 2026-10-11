@@ -1,4 +1,4 @@
-const CACHE = 'dmkr-audio-v1';
+const CACHE = 'dmkr-audio-v2';
 const ASSETS = [
   '/',
   '/index.html',
