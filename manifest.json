@@ -8,15 +8,15 @@
   "theme_color": "#2A082C",
   "icons": [
     {
-      "src": "https://via.placeholder.com/192x192.png?text=DMKR",
+      "src": "img/strat.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "https://via.placeholder.com/512x512.png?text=DMKR",
+      "src": "img/strat.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
