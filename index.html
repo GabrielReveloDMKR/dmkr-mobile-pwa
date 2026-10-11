@@ -78,6 +78,24 @@
 
     .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#8E24AA;color:#fff;padding:10px 18px;border-radius:20px;font-size:.8rem;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:2000;max-width:90%;text-align:center}
     .toast.show{opacity:1;transform:translate(-50%,0)}
+    .ck{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.65);display:none;align-items:flex-end}
+    .ck.open{display:flex}
+    .sheet{background:#1A051D;border-top:1px solid #4A0E4E;border-radius:18px 18px 0 0;width:100%;max-height:92vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;animation:up .28s ease}
+    @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+    .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 16px 4px}
+    .sheet-head h3{font-size:1.05rem}
+    .sheet-sub{font-size:.78rem;color:#B39DDB;padding:0 16px 8px}
+    .xbtn{background:none;border:none;color:#fff;font-size:1.4rem;padding:0 4px}
+    .ckform{padding:4px 16px 0}
+    .ckform label{display:block;font-size:.78rem;font-weight:700;color:#E1BEE7;margin:12px 0 5px}
+    .ckform input,.ckform textarea{width:100%;background:#0F0311;border:1px solid #4A0E4E;border-radius:8px;color:#fff;padding:11px 12px;font-size:16px;outline:none;-webkit-user-select:text;user-select:text}
+    .ckform input:focus,.ckform textarea:focus{border-color:#E040FB}
+    .ckform textarea{resize:none;height:64px}
+    .ckfoot{position:sticky;bottom:0;background:#1A051D;border-top:1px solid #2A082C;margin:16px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+    .cktotal{display:flex;justify-content:space-between;align-items:baseline;font-size:.8rem;color:#B39DDB;margin-bottom:10px}
+    .cktotal b{font-size:1.05rem;color:#fff}
+    .gopay{width:100%;background:#2563EB;color:#fff;border:none;border-radius:10px;padding:14px;font-weight:800;font-size:.95rem}
+    .gopay:active{transform:scale(.98)}
   </style>
 </head>
 <body>
@@ -137,19 +155,50 @@
   <button class="nav" data-go="account"><span class="i">👤</span>Mi Cuenta</button>
 </nav>
 
+<div class="ck" id="ck">
+  <div class="sheet">
+    <div class="sheet-head"><h3>📦 Información de Envío y Facturación</h3><button class="xbtn" id="ckClose" type="button" aria-label="Cerrar">✕</button></div>
+    <div class="sheet-sub">No necesitas crear una cuenta. Completa tus datos para despachar tu pedido.</div>
+    <form class="ckform" id="ckForm">
+      <label>Nombre Completo / Razón Social *</label>
+      <input name="nombre" required placeholder="Ej. Gabriel Angulo" autocomplete="name">
+      <label>Cédula o NIT (Para Aduana/Factura) *</label>
+      <input name="documento" required inputmode="numeric" placeholder="Ej. 1.193.033.222">
+      <label>Correo Electrónico (Notificaciones) *</label>
+      <input name="correo" type="email" required placeholder="correo@ejemplo.com" autocomplete="email">
+      <label>Número de Contacto / Celular *</label>
+      <input name="celular" type="tel" required placeholder="Ej. +57 300 1234567" autocomplete="tel">
+      <label>País *</label>
+      <input name="pais" required value="Colombia">
+      <label>Ciudad *</label>
+      <input name="ciudad" required value="Pasto">
+      <label>Código Postal</label>
+      <input name="postal" inputmode="numeric" placeholder="Ej. 520001">
+      <label>Dirección de Residencia Exacta *</label>
+      <input name="direccion" required placeholder="Ej. Carrera 26 #12-49" autocomplete="street-address">
+      <label>Instrucciones Adicionales para el Courier (Opcional)</label>
+      <textarea name="notas" placeholder="Ej. Dejar en recepción o timbre 202"></textarea>
+      <div class="ckfoot">
+        <div class="cktotal"><span>Total a Pagar:</span><b id="ckTotal"></b></div>
+        <button class="gopay" type="submit">💳 Continuar a Pasarela de Pagos</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 (function () {
   var PRODUCTS = [
     {id:1,name:"Fender American Ultra Stratocaster",cat:"Guitarras",price:11800000,e:"🎸",img:"/img/strat.jpg"},
-    {id:2,name:"Gibson Les Paul Standard '50s",cat:"Guitarras",price:13500000,e:"🎸",img:"/img/strat.jpg"},
-    {id:3,name:"Yamaha Pacifica 112V",cat:"Guitarras",price:1750000,e:"🎸"},
-    {id:4,name:"Korg Minilogue XD",cat:"Sintetizadores",price:3900000,e:"🎹"},
-    {id:5,name:"Moog Subsequent 25",cat:"Sintetizadores",price:7600000,e:"🎹"},
-    {id:6,name:"Boss DS-1 Distortion",cat:"Pedales",price:520000,e:"🎛️"},
-    {id:7,name:"Ibanez Tube Screamer TS9",cat:"Pedales",price:690000,e:"🎛️"},
-    {id:8,name:"Strymon Timeline Delay",cat:"Pedales",price:2850000,e:"🎛️"}
+    {id:2,name:"Gibson Les Paul Standard '50s",cat:"Guitarras",price:13500000,e:"🎸",img:"/img/lespaul.jpg"},
+    {id:3,name:"Yamaha Pacifica 112V",cat:"Guitarras",price:1750000,e:"🎸",img:"/img/pacifica.jpg"},
+    {id:4,name:"Korg Minilogue XD",cat:"Sintetizadores",price:3900000,e:"🎹",img:"/img/minilogue.jpg"},
+    {id:5,name:"Moog Subsequent 25",cat:"Sintetizadores",price:7600000,e:"🎹",img:"/img/moog.jpg"},
+    {id:6,name:"Boss DS-1 Distortion",cat:"Pedales",price:520000,e:"🎛️",img:"/img/boss-ds1.jpg"},
+    {id:7,name:"Ibanez Tube Screamer TS9",cat:"Pedales",price:690000,e:"🎛️",img:"/img/tubescreamer.jpg"},
+    {id:8,name:"Strymon Timeline Delay",cat:"Pedales",price:2850000,e:"🎛️",img:"/img/timeline.jpg"}
   ];
   var CATS = ["Ofertas","Guitarras","Sintetizadores","Pedales"];
   var VALID = {home:1,search:1,favs:1,notifs:1,account:1,cart:1};
@@ -280,13 +329,51 @@
       var d = t.getAttribute("data-dec"); cart[d]--; if (cart[d] <= 0) delete cart[d];
       save("dmkr_cart", cart); renderCart(); badges(); return;
     }
-    if (t.hasAttribute("data-pay")) toast("Pedido recibido. Pronto te contactaremos");
+    if (t.hasAttribute("data-pay")) openCheckout();
+  });
+
+  // ===== Pasarela / datos de envío =====
+  // Cuando tengas el enlace de tu pasarela de pagos, pégalo entre las comillas:
+  var PAYMENT_URL = "";
+  var ckOpen = false;
+
+  function cartTotal() {
+    return Object.keys(cart).reduce(function (s, id) { return s + find(+id).price * cart[id]; }, 0);
+  }
+  function openCheckout() {
+    if (!cartCount()) { toast("Tu carrito está vacío"); return; }
+    $("ckTotal").textContent = money(cartTotal()) + " (IVA Incl.)";
+    $("ck").classList.add("open"); ckOpen = true;
+    history.pushState({ v: view, m: 1 }, "", "#pago");
+  }
+  function hideCheckout() { $("ck").classList.remove("open"); ckOpen = false; }
+  function closeCheckout() { if (ckOpen) history.back(); }
+
+  $("ckClose").addEventListener("click", closeCheckout);
+  $("ck").addEventListener("click", function (e) { if (e.target === $("ck")) closeCheckout(); });
+
+  $("ckForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = e.target, data = {};
+    ["nombre","documento","correo","celular","pais","ciudad","postal","direccion","notas"].forEach(function (n) { data[n] = f.elements[n].value.trim(); });
+    var items = Object.keys(cart).map(function (id) { var p = find(+id); return { producto: p.name, cantidad: cart[id], precio: p.price }; });
+    save("dmkr_last_order", { cliente: data, items: items, total: cartTotal(), fecha: new Date().toISOString() });
+    if (PAYMENT_URL) {
+      window.open(PAYMENT_URL, "_blank");
+    } else {
+      cart = {}; save("dmkr_cart", cart);
+      closeCheckout(); renderCart(); badges();
+      toast("Datos recibidos. Te contactaremos para coordinar el pago");
+    }
   });
 
   $("q").addEventListener("input", function () { if (view !== "search") show("search", true); else renderSearch(); });
   $("q").addEventListener("keydown", function (e) { if (e.key === "Enter") $("q").blur(); });
 
-  window.addEventListener("popstate", function (e) { show((e.state && e.state.v) || "home", false); });
+  window.addEventListener("popstate", function (e) {
+    if (ckOpen) { hideCheckout(); return; }
+    show((e.state && e.state.v) || "home", false);
+  });
 
   history.replaceState({ v: "home" }, "", "#home");
   renderAll();
