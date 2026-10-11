@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>DMKR Audio</title>
-
-  <!-- PWA / TWA -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2A082C">
   <meta name="mobile-web-app-capable" content="yes">
@@ -14,254 +12,292 @@
   <meta name="apple-mobile-web-app-title" content="DMKR Audio">
   <link rel="icon" type="image/png" href="/img/icon-192.png">
   <link rel="apple-touch-icon" href="/img/icon-192.png">
-
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    html {
-      -webkit-text-size-adjust: 100%;
-      overscroll-behavior-y: none; /* evita el "tirar para recargar" de Chrome */
-      background-color: #0F0311;
-    }
-    body {
-      background-color: #0F0311;
-      color: #FFFFFF;
-      padding-top: calc(104px + env(safe-area-inset-top, 0px));
-      padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px));
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      touch-action: manipulation;
-      overscroll-behavior-y: none;
-      width: 100%;
-      -webkit-user-select: none;
-      user-select: none;            /* comportamiento de app nativa */
-      -webkit-touch-callout: none;
-    }
-    img { -webkit-user-drag: none; user-drag: none; }
-    input { -webkit-user-select: text; user-select: text; }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+    html{-webkit-text-size-adjust:100%;overscroll-behavior-y:none;background:#0F0311;scroll-behavior:smooth}
+    body{background:#0F0311;color:#fff;padding-top:calc(104px + env(safe-area-inset-top,0px));padding-bottom:calc(75px + env(safe-area-inset-bottom,0px));overflow-x:hidden;width:100%;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+    img{-webkit-user-drag:none}
+    input{-webkit-user-select:text;user-select:text}
+    button{font-family:inherit}
 
-    .app-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background-color: #2A082C;
-      z-index: 1000;
-      padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
-    .header-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-    .brand-logo {
-      font-size: 1.1rem;
-      font-weight: 900;
-      color: #E040FB;
-    }
-    .search-bar {
-      flex: 1;
-      background: #1A051D;
-      border: 1px solid #4A0E4E;
-      border-radius: 20px;
-      padding: 6px 12px;
-      display: flex;
-      align-items: center;
-      color: #888;
-      font-size: 0.85rem;
-    }
-    .search-bar input {
-      background: transparent;
-      border: none;
-      color: #FFF;
-      outline: none;
-      width: 100%;
-      font-size: 16px; /* 16px evita el zoom automático al escribir */
-    }
-    .header-location {
-      font-size: 0.75rem;
-      color: #D1C4E9;
-    }
+    .app-header{position:fixed;top:0;left:0;right:0;background:#2A082C;z-index:1000;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+    .header-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .brand-logo{font-size:1.1rem;font-weight:900;color:#E040FB}
+    .search-bar{flex:1;background:#1A051D;border:1px solid #4A0E4E;border-radius:20px;padding:6px 12px;display:flex;align-items:center;gap:6px;font-size:.85rem}
+    .search-bar input{background:transparent;border:none;color:#FFF;outline:none;width:100%;font-size:16px}
+    .cart-btn{position:relative;background:none;border:none;font-size:1.3rem;color:#fff;padding:2px 4px}
+    .badge{position:absolute;top:-6px;right:-6px;background:#E040FB;color:#fff;border-radius:10px;font-size:.6rem;font-weight:800;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 4px}
+    .badge.zero{display:none}
+    .header-location{font-size:.75rem;color:#D1C4E9}
 
-    .hero-slider {
-      margin: 12px;
-      background: linear-gradient(135deg, #3A0B3E 0%, #1A051D 100%);
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid #4A0E4E;
-    }
-    .hero-slider h2 { font-size: 1.2rem; font-weight: 800; color: #FFF; }
-    .hero-slider p { font-size: 0.8rem; color: #B39DDB; margin-top: 4px; }
+    .view{display:none;opacity:0;transform:translateY(10px)}
+    .view.active{display:block;animation:in .28s ease forwards}
+    @keyframes in{to{opacity:1;transform:none}}
 
-    .category-scroll {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 4px 12px 12px 12px;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-    .category-scroll::-webkit-scrollbar { display: none; }
-    .cat-item {
-      background: #1A051D;
-      border: 1px solid #2A082C;
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 0.8rem;
-      white-space: nowrap;
-      color: #E1BEE7;
-    }
-    .cat-item.active { background: #8E24AA; color: #FFF; font-weight: bold; border-color: #E040FB; }
+    .hero{margin:12px;background:linear-gradient(135deg,#3A0B3E,#1A051D);border-radius:12px;padding:16px;border:1px solid #4A0E4E}
+    .hero h2{font-size:1.2rem;font-weight:800}
+    .hero p{font-size:.8rem;color:#B39DDB;margin-top:4px}
+    .cats{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .cats::-webkit-scrollbar{display:none}
+    .cat{background:#1A051D;border:1px solid #2A082C;border-radius:20px;padding:8px 16px;font-size:.8rem;white-space:nowrap;color:#E1BEE7;transition:.2s}
+    .cat.active{background:#8E24AA;color:#fff;font-weight:700;border-color:#E040FB}
+    .title{font-size:1rem;font-weight:700;margin:12px 12px 8px}
+    .empty{text-align:center;color:#B39DDB;padding:48px 24px;font-size:.9rem;line-height:1.5}
+    .empty b{display:block;font-size:2rem;margin-bottom:8px}
 
-    .section-title { font-size: 1rem; font-weight: 700; margin: 12px 12px 8px 12px; color: #FFF; }
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 12px}
+    .card{position:relative;background:#1A051D;border:1px solid #2A082C;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
+    .pimg{width:100%;height:120px;object-fit:contain;background:#250728;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:3rem}
+    .fav{position:absolute;top:14px;right:14px;background:rgba(15,3,17,.7);border:none;border-radius:50%;width:32px;height:32px;font-size:1rem;color:#fff;z-index:1}
+    .pt{font-size:.8rem;color:#E0E0E0;line-height:1.2;height:2.4em;overflow:hidden;margin-bottom:6px}
+    .pp{font-size:.95rem;font-weight:800;color:#E040FB;margin-bottom:6px}
+    .ship{font-size:.65rem;color:#00E676;font-weight:700;margin-bottom:8px}
+    .buy{background:#8E24AA;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:700;font-size:.75rem;width:100%}
+    .buy:active{background:#AB47BC;transform:scale(.97)}
 
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      padding: 0 12px;
-    }
-    .product-card {
-      background: #1A051D;
-      border: 1px solid #2A082C;
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .product-img {
-      width: 100%;
-      height: 120px;
-      object-fit: contain;
-      background: #250728;
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-    .product-title { font-size: 0.8rem; color: #E0E0E0; line-height: 1.2; height: 2.4em; overflow: hidden; margin-bottom: 6px; }
-    .product-price { font-size: 0.95rem; font-weight: 800; color: #E040FB; margin-bottom: 6px; }
-    .shipping-tag { font-size: 0.65rem; color: #00E676; font-weight: bold; margin-bottom: 8px; }
+    .row{display:flex;align-items:center;gap:10px;background:#1A051D;border:1px solid #2A082C;border-radius:10px;padding:10px;margin:0 12px 10px}
+    .row .pimg{width:64px;height:64px;font-size:1.8rem;margin:0;flex:none}
+    .row .info{flex:1;min-width:0}
+    .row .pt{height:auto;margin-bottom:4px}
+    .qty{display:flex;align-items:center;gap:10px;margin-top:6px}
+    .qty button{background:#3A0B3E;color:#fff;border:1px solid #4A0E4E;border-radius:6px;width:30px;height:30px;font-size:1rem}
+    .total{margin:12px;background:#2A082C;border-radius:10px;padding:14px;display:flex;justify-content:space-between;font-weight:800}
+    .pay{display:block;margin:0 12px;width:calc(100% - 24px);background:#8E24AA;color:#fff;border:none;border-radius:10px;padding:14px;font-weight:800;font-size:.95rem}
+    .note{margin:0 12px 10px;background:#1A051D;border:1px solid #2A082C;border-radius:10px;padding:12px;font-size:.85rem;color:#E0E0E0;line-height:1.35}
+    .note small{display:block;color:#B39DDB;margin-top:4px}
+    .menu{width:calc(100% - 24px);margin:0 12px 10px;background:#1A051D;border:1px solid #2A082C;border-radius:10px;padding:14px;color:#fff;text-align:left;font-size:.9rem;display:flex;justify-content:space-between}
+    .profile{text-align:center;padding:20px 12px}
+    .avatar{width:72px;height:72px;border-radius:50%;background:#8E24AA;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:2rem}
 
-    .buy-btn {
-      background: #8E24AA;
-      color: #FFF;
-      border: none;
-      padding: 10px;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.75rem;
-      width: 100%;
-      cursor: pointer;
-    }
-    .buy-btn:active { background: #AB47BC; }
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(60px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:#1A051D;border-top:1px solid #2A082C;display:flex;justify-content:space-around;align-items:center;z-index:1000}
+    .nav{position:relative;background:none;border:none;display:flex;flex-direction:column;align-items:center;color:#777;font-size:.65rem;padding:6px 4px;transition:.2s}
+    .nav.active{color:#E040FB;font-weight:700}
+    .nav .i{font-size:1.2rem;margin-bottom:2px;filter:grayscale(1);opacity:.7;transition:.2s}
+    .nav.active .i{filter:none;opacity:1;transform:scale(1.15)}
+    .nav .badge{top:0;right:-2px}
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: calc(60px + env(safe-area-inset-bottom, 0px));
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      background: #1A051D;
-      border-top: 1px solid #2A082C;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 1000;
-    }
-    .nav-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #777;
-      font-size: 0.65rem;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .nav-link.active { color: #E040FB; font-weight: bold; }
-    .nav-icon { font-size: 1.2rem; margin-bottom: 2px; }
+    .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#8E24AA;color:#fff;padding:10px 18px;border-radius:20px;font-size:.8rem;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:2000;max-width:90%;text-align:center}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
   </style>
 </head>
 <body>
 
-  <header class="app-header">
-    <div class="header-top">
-      <div class="brand-logo">DMKR</div>
-      <div class="search-bar">
-        🔍 <input type="text" placeholder="Buscar en DMKR Audio...">
-      </div>
-      <span style="font-size: 1.2rem;">🛒</span>
-    </div>
-    <div class="header-location">📍 Enviar a Pasto, Nariño</div>
-  </header>
+<header class="app-header">
+  <div class="header-top">
+    <div class="brand-logo" data-go="home">DMKR</div>
+    <div class="search-bar">🔍 <input id="q" type="search" placeholder="Buscar en DMKR Audio..." autocomplete="off"></div>
+    <button class="cart-btn" data-go="cart" aria-label="Carrito">🛒<span class="badge zero" id="cartBadge"></span></button>
+  </div>
+  <div class="header-location">📍 Enviar a Pasto, Nariño</div>
+</header>
 
-  <section class="hero-slider">
-    <h2>Ofertas de la Semana</h2>
-    <p>Guitarras boutique y procesamiento de estudio con garantía</p>
+<main>
+  <section class="view" id="v-home">
+    <div class="hero"><h2>Ofertas de la Semana</h2><p>Guitarras boutique y procesamiento de estudio con garantía</p></div>
+    <div class="cats" id="cats"></div>
+    <div class="title" id="homeTitle">Recomendados para ti</div>
+    <div class="grid" id="homeGrid"></div>
   </section>
 
-  <div class="category-scroll">
-    <div class="cat-item active" onclick="alert('Categoría seleccionada: Ofertas')">Ofertas</div>
-    <div class="cat-item" onclick="alert('Categoría seleccionada: Guitarras')">Guitarras</div>
-    <div class="cat-item" onclick="alert('Categoría seleccionada: Sintetizadores')">Sintetizadores</div>
-    <div class="cat-item" onclick="alert('Categoría seleccionada: Pedales')">Pedales</div>
-  </div>
+  <section class="view" id="v-search">
+    <div class="title" id="searchTitle">Buscar</div>
+    <div class="grid" id="searchGrid"></div>
+  </section>
 
-  <div class="section-title">Recomendados para ti</div>
-  <main class="product-grid">
-    <div class="product-card">
-      <img src="/img/strat.jpg" alt="Fender Ultra" class="product-img">
-      <div class="product-title">Fender American Ultra Stratocaster</div>
-      <div class="product-price">$11.800.000 COP</div>
-      <div class="shipping-tag">Envío gratis</div>
-      <button class="buy-btn" onclick="alert('¡Producto agregado al carrito!')">Agregar</button>
-    </div>
-    <div class="product-card">
-      <img src="/img/strat.jpg" alt="Gibson Les Paul" class="product-img">
-      <div class="product-title">Gibson Les Paul Standard '50s</div>
-      <div class="product-price">$13.500.000 COP</div>
-      <div class="shipping-tag">Envío gratis</div>
-      <button class="buy-btn" onclick="alert('¡Producto agregado al carrito!')">Agregar</button>
-    </div>
-  </main>
+  <section class="view" id="v-favs">
+    <div class="title">Tus favoritos</div>
+    <div class="grid" id="favGrid"></div>
+  </section>
 
-  <nav class="bottom-nav">
-    <a class="nav-link active" onclick="alert('Ya estás en Inicio')">
-      <span class="nav-icon">🏠</span>
-      <span>Inicio</span>
-    </a>
-    <a class="nav-link" onclick="alert('Abriendo buscador...')">
-      <span class="nav-icon">🔍</span>
-      <span>Buscar</span>
-    </a>
-    <a class="nav-link" onclick="alert('Sección de favoritos')">
-      <span class="nav-icon">❤️</span>
-      <span>Favoritos</span>
-    </a>
-    <a class="nav-link" onclick="alert('Sin notificaciones nuevas')">
-      <span class="nav-icon">🔔</span>
-      <span>Notificaciones</span>
-    </a>
-    <a class="nav-link" onclick="alert('Perfil de usuario DMKR')">
-      <span class="nav-icon">👤</span>
-      <span>Mi Cuenta</span>
-    </a>
-  </nav>
+  <section class="view" id="v-notifs">
+    <div class="title">Notificaciones</div>
+    <div class="note">🔥 Nuevas ofertas en guitarras<small>Hace 1 hora</small></div>
+    <div class="note">🚚 Envío gratis en todos los pedidos a Nariño<small>Hoy</small></div>
+    <div class="note">🎛️ Llegaron pedales de efectos nuevos<small>Ayer</small></div>
+  </section>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js').catch(function (e) { console.error(e); });
-      });
+  <section class="view" id="v-account">
+    <div class="profile"><div class="avatar">👤</div><b>Mi cuenta DMKR</b></div>
+    <button class="menu" data-go="favs"><span>❤️ Mis favoritos</span><span id="accFav">›</span></button>
+    <button class="menu" data-go="cart"><span>🛒 Mi carrito</span><span id="accCart">›</span></button>
+    <button class="menu" data-go="notifs"><span>🔔 Notificaciones</span><span>›</span></button>
+  </section>
+
+  <section class="view" id="v-cart">
+    <div class="title">Mi carrito</div>
+    <div id="cartList"></div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav" data-go="home"><span class="i">🏠</span>Inicio</button>
+  <button class="nav" data-go="search"><span class="i">🔍</span>Buscar</button>
+  <button class="nav" data-go="favs"><span class="i">❤️</span>Favoritos<span class="badge zero" id="favBadge"></span></button>
+  <button class="nav" data-go="notifs"><span class="i">🔔</span>Notificaciones</button>
+  <button class="nav" data-go="account"><span class="i">👤</span>Mi Cuenta</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var PRODUCTS = [
+    {id:1,name:"Fender American Ultra Stratocaster",cat:"Guitarras",price:11800000,e:"🎸",img:"/img/strat.jpg"},
+    {id:2,name:"Gibson Les Paul Standard '50s",cat:"Guitarras",price:13500000,e:"🎸",img:"/img/strat.jpg"},
+    {id:3,name:"Yamaha Pacifica 112V",cat:"Guitarras",price:1750000,e:"🎸"},
+    {id:4,name:"Korg Minilogue XD",cat:"Sintetizadores",price:3900000,e:"🎹"},
+    {id:5,name:"Moog Subsequent 25",cat:"Sintetizadores",price:7600000,e:"🎹"},
+    {id:6,name:"Boss DS-1 Distortion",cat:"Pedales",price:520000,e:"🎛️"},
+    {id:7,name:"Ibanez Tube Screamer TS9",cat:"Pedales",price:690000,e:"🎛️"},
+    {id:8,name:"Strymon Timeline Delay",cat:"Pedales",price:2850000,e:"🎛️"}
+  ];
+  var CATS = ["Ofertas","Guitarras","Sintetizadores","Pedales"];
+  var VALID = {home:1,search:1,favs:1,notifs:1,account:1,cart:1};
+
+  var $ = function (id) { return document.getElementById(id); };
+  function load(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  var favs = load("dmkr_favs", []);
+  var cart = load("dmkr_cart", {});
+  var cat = "Ofertas", view = "home", toastTimer;
+
+  function money(n) { return "$" + n.toLocaleString("es-CO") + " COP"; }
+  function find(id) { return PRODUCTS.filter(function (p) { return p.id === id; })[0]; }
+
+  function toast(msg) {
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 1600);
+  }
+
+  function imgHTML(p) {
+    if (p.img) return '<img class="pimg" src="' + p.img + '" alt="' + p.name + '" onerror="this.outerHTML=\'<div class=&quot;pimg&quot;>' + p.e + '</div>\'">';
+    return '<div class="pimg">' + p.e + '</div>';
+  }
+
+  function card(p) {
+    var isFav = favs.indexOf(p.id) > -1;
+    return '<div class="card">' +
+      '<button class="fav" data-fav="' + p.id + '" aria-label="Favorito">' + (isFav ? "❤️" : "🤍") + '</button>' +
+      imgHTML(p) +
+      '<div class="pt">' + p.name + '</div>' +
+      '<div class="pp">' + money(p.price) + '</div>' +
+      '<div class="ship">Envío gratis</div>' +
+      '<button class="buy" data-add="' + p.id + '">Agregar</button></div>';
+  }
+
+  function grid(list, icon, msg) {
+    if (!list.length) return '<div class="empty" style="grid-column:1/-1"><b>' + icon + '</b>' + msg + '</div>';
+    return list.map(card).join("");
+  }
+
+  function cartCount() { return Object.keys(cart).reduce(function (s, k) { return s + cart[k]; }, 0); }
+
+  function badges() {
+    var c = cartCount(), f = favs.length;
+    $("cartBadge").textContent = c || ""; $("cartBadge").classList.toggle("zero", !c);
+    $("favBadge").textContent = f || ""; $("favBadge").classList.toggle("zero", !f);
+    $("accFav").textContent = f ? f + " ›" : "›";
+    $("accCart").textContent = c ? c + " ›" : "›";
+  }
+
+  function renderHome() {
+    $("cats").innerHTML = CATS.map(function (c) {
+      return '<button class="cat' + (c === cat ? " active" : "") + '" data-cat="' + c + '">' + c + '</button>';
+    }).join("");
+    var list = cat === "Ofertas" ? PRODUCTS : PRODUCTS.filter(function (p) { return p.cat === cat; });
+    $("homeTitle").textContent = cat === "Ofertas" ? "Recomendados para ti" : cat;
+    $("homeGrid").innerHTML = grid(list, "📦", "No hay productos en esta categoría.");
+  }
+
+  function renderSearch() {
+    var raw = $("q").value.trim(), q = raw.toLowerCase();
+    var list = q ? PRODUCTS.filter(function (p) { return (p.name + " " + p.cat).toLowerCase().indexOf(q) > -1; }) : PRODUCTS;
+    $("searchTitle").textContent = q ? "Resultados para \"" + raw + "\"" : "Todos los productos";
+    $("searchGrid").innerHTML = grid(list, "🔍", "No encontramos resultados.<br>Prueba con otra palabra.");
+  }
+
+  function renderFavs() {
+    var list = PRODUCTS.filter(function (p) { return favs.indexOf(p.id) > -1; });
+    $("favGrid").innerHTML = grid(list, "🤍", "Aún no tienes favoritos.<br>Toca el corazón en un producto para guardarlo.");
+  }
+
+  function renderCart() {
+    var ids = Object.keys(cart);
+    if (!ids.length) { $("cartList").innerHTML = '<div class="empty"><b>🛒</b>Tu carrito está vacío.</div>'; return; }
+    var total = 0;
+    var rows = ids.map(function (id) {
+      var p = find(+id), q = cart[id]; total += p.price * q;
+      return '<div class="row">' + imgHTML(p) + '<div class="info"><div class="pt">' + p.name + '</div><div class="pp" style="margin:0">' + money(p.price) + '</div>' +
+        '<div class="qty"><button data-dec="' + id + '">−</button><b>' + q + '</b><button data-inc="' + id + '">+</button></div></div></div>';
+    }).join("");
+    $("cartList").innerHTML = rows + '<div class="total"><span>Total</span><span>' + money(total) + '</span></div>' +
+      '<button class="pay" data-pay="1">Finalizar compra</button>';
+  }
+
+  function renderAll() { renderHome(); renderSearch(); renderFavs(); renderCart(); badges(); }
+
+  function show(v, push) {
+    if (!VALID[v]) v = "home";
+    view = v;
+    var views = document.querySelectorAll(".view");
+    for (var i = 0; i < views.length; i++) views[i].classList.remove("active");
+    $("v-" + v).classList.add("active");
+    var navs = document.querySelectorAll(".nav");
+    for (var j = 0; j < navs.length; j++) navs[j].classList.toggle("active", navs[j].getAttribute("data-go") === v);
+    if (v === "search") renderSearch();
+    if (v === "favs") renderFavs();
+    if (v === "cart") renderCart();
+    badges();
+    window.scrollTo(0, 0);
+    if (push) history.pushState({ v: v }, "", "#" + v);
+  }
+
+  function go(v) { if (v !== view) show(v, true); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-go],[data-cat],[data-fav],[data-add],[data-inc],[data-dec],[data-pay]");
+    if (!t) return;
+
+    if (t.hasAttribute("data-go")) {
+      var v = t.getAttribute("data-go");
+      go(v);
+      if (v === "search") $("q").focus();
+      return;
     }
-  </script>
+    if (t.hasAttribute("data-cat")) { cat = t.getAttribute("data-cat"); renderHome(); return; }
+    if (t.hasAttribute("data-fav")) {
+      var id = +t.getAttribute("data-fav"), i = favs.indexOf(id);
+      if (i > -1) { favs.splice(i, 1); toast("Quitado de favoritos"); } else { favs.push(id); toast("Agregado a favoritos ❤️"); }
+      save("dmkr_favs", favs); renderAll(); return;
+    }
+    if (t.hasAttribute("data-add")) {
+      var a = t.getAttribute("data-add"); cart[a] = (cart[a] || 0) + 1;
+      save("dmkr_cart", cart); badges(); toast("Agregado al carrito 🛒"); return;
+    }
+    if (t.hasAttribute("data-inc")) { cart[t.getAttribute("data-inc")]++; save("dmkr_cart", cart); renderCart(); badges(); return; }
+    if (t.hasAttribute("data-dec")) {
+      var d = t.getAttribute("data-dec"); cart[d]--; if (cart[d] <= 0) delete cart[d];
+      save("dmkr_cart", cart); renderCart(); badges(); return;
+    }
+    if (t.hasAttribute("data-pay")) toast("Pedido recibido. Pronto te contactaremos");
+  });
+
+  $("q").addEventListener("input", function () { if (view !== "search") show("search", true); else renderSearch(); });
+  $("q").addEventListener("keydown", function (e) { if (e.key === "Enter") $("q").blur(); });
+
+  window.addEventListener("popstate", function (e) { show((e.state && e.state.v) || "home", false); });
+
+  history.replaceState({ v: "home" }, "", "#home");
+  renderAll();
+  show("home", false);
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function (e) { console.error(e); });
+    });
+  }
+})();
+</script>
 </body>
 </html>
