@@ -1,9 +1,10 @@
 {
-  "name": "DaMaker's Audio (DMKR)",
-  "short_name": "DMKR Audio",
+  "name": "DMKR Audio Mobile",
+  "short_name": "DMKR",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#2A082C",
+  "orientation": "portrait",
+  "background_color": "#0F0311",
   "theme_color": "#2A082C",
   "icons": [
     {
