@@ -7,15 +7,15 @@
   "theme_color": "#2A082C",
   "icons": [
     {
-      "src": "img/strat.jpg",
+      "src": "https://via.placeholder.com/192x192.png?text=DMKR",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "img/strat.jpg",
+      "src": "https://via.placeholder.com/512x512.png?text=DMKR",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
