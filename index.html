@@ -2,10 +2,19 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>DMKR Audio</title>
-  <link rel="manifest" href="manifest.json">
+
+  <!-- PWA / TWA -->
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2A082C">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DMKR Audio">
+  <link rel="icon" type="image/png" href="/img/icon-192.png">
+  <link rel="apple-touch-icon" href="/img/icon-192.png">
+
   <style>
     * {
       box-sizing: border-box;
@@ -14,16 +23,28 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
+    html {
+      -webkit-text-size-adjust: 100%;
+      overscroll-behavior-y: none; /* evita el "tirar para recargar" de Chrome */
+      background-color: #0F0311;
+    }
     body {
       background-color: #0F0311;
       color: #FFFFFF;
-      padding-top: 104px;
-      padding-bottom: 75px;
-      overflow-y: auto !important; /* Fuerza el desplazamiento vertical */
+      padding-top: calc(104px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+      overflow-x: hidden;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-y; /* Permite hacer scroll libremente */
-      width: 100vw;
+      touch-action: manipulation;
+      overscroll-behavior-y: none;
+      width: 100%;
+      -webkit-user-select: none;
+      user-select: none;            /* comportamiento de app nativa */
+      -webkit-touch-callout: none;
     }
+    img { -webkit-user-drag: none; user-drag: none; }
+    input { -webkit-user-select: text; user-select: text; }
 
     .app-header {
       position: fixed;
@@ -32,7 +53,7 @@
       right: 0;
       background-color: #2A082C;
       z-index: 1000;
-      padding: 10px 12px;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
     .header-top {
@@ -63,7 +84,7 @@
       color: #FFF;
       outline: none;
       width: 100%;
-      font-size: 0.85rem;
+      font-size: 16px; /* 16px evita el zoom automático al escribir */
     }
     .header-location {
       font-size: 0.75rem;
@@ -86,6 +107,7 @@
       overflow-x: auto;
       padding: 4px 12px 12px 12px;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
     .category-scroll::-webkit-scrollbar { display: none; }
     .cat-item {
@@ -100,7 +122,7 @@
     .cat-item.active { background: #8E24AA; color: #FFF; font-weight: bold; border-color: #E040FB; }
 
     .section-title { font-size: 1rem; font-weight: 700; margin: 12px 12px 8px 12px; color: #FFF; }
-    
+
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -127,7 +149,7 @@
     .product-title { font-size: 0.8rem; color: #E0E0E0; line-height: 1.2; height: 2.4em; overflow: hidden; margin-bottom: 6px; }
     .product-price { font-size: 0.95rem; font-weight: 800; color: #E040FB; margin-bottom: 6px; }
     .shipping-tag { font-size: 0.65rem; color: #00E676; font-weight: bold; margin-bottom: 8px; }
-    
+
     .buy-btn {
       background: #8E24AA;
       color: #FFF;
@@ -146,7 +168,8 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 60px;
+      height: calc(60px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       background: #1A051D;
       border-top: 1px solid #2A082C;
       display: flex;
@@ -195,14 +218,14 @@
   <div class="section-title">Recomendados para ti</div>
   <main class="product-grid">
     <div class="product-card">
-      <img src="img/strat.jpg" alt="Fender Ultra" class="product-img">
+      <img src="/img/strat.jpg" alt="Fender Ultra" class="product-img">
       <div class="product-title">Fender American Ultra Stratocaster</div>
       <div class="product-price">$11.800.000 COP</div>
       <div class="shipping-tag">Envío gratis</div>
       <button class="buy-btn" onclick="alert('¡Producto agregado al carrito!')">Agregar</button>
     </div>
     <div class="product-card">
-      <img src="img/strat.jpg" alt="Gibson Les Paul" class="product-img">
+      <img src="/img/strat.jpg" alt="Gibson Les Paul" class="product-img">
       <div class="product-title">Gibson Les Paul Standard '50s</div>
       <div class="product-price">$13.500.000 COP</div>
       <div class="shipping-tag">Envío gratis</div>
@@ -235,7 +258,9 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (e) { console.error(e); });
+      });
     }
   </script>
 </body>
