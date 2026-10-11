@@ -8,15 +8,15 @@
   "theme_color": "#2A082C",
   "icons": [
     {
-      "src": "https://www.pwabuilder.com/assets/images/icon-192.png",
+      "src": "/img/strat.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "https://www.pwabuilder.com/assets/images/icon-512.png",
+      "src": "/img/strat.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
