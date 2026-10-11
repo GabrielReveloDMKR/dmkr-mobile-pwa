@@ -1,449 +1,297 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DaMaker's Audio (DMKR) | Boutique de Audio e Instrumentos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DMKR Audio</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2A082C">
+  <!-- Soportes nativos para pantalla completa -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: #0F0311;
+      color: #FFFFFF;
+      padding-top: 104px; /* Espacio para la cabecera fija doble */
+      padding-bottom: 65px; /* Espacio para la barra inferior */
+      overflow-x: hidden;
+      width: 100vw;
+    }
 
-    <!-- Enlace al Manifest de la PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2A082C">
-    
-    <!-- Script para registrar el Service Worker en móviles -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker registrado con éxito:', reg))
-                    .catch(err => console.log('Error al registrar Service Worker:', err));
-            });
-        }
-    </script>
+    /* 1. CABECERA TIPO MERCADO LIBRE (Fija Arriba) */
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #2A082C;
+      z-index: 1000;
+      padding: 8px 12px 10px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .brand-logo {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #E040FB;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .search-bar {
+      flex: 1;
+      background: #1A051D;
+      border: 1px solid #4A0E4E;
+      border-radius: 20px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #888;
+      font-size: 0.85rem;
+    }
+    .search-bar input {
+      background: transparent;
+      border: none;
+      color: #FFF;
+      outline: none;
+      width: 100%;
+      font-size: 0.85rem;
+    }
+    .header-location {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: #D1C4E9;
+    }
 
-    <style>
-        :root {
-            --purple-deep: #2A082C;
-            --purple-royal: #5B1363;
-            --purple-accent: #A855F7;
-            --bg-main: #FAFAFA;
-            --bg-card: #FFFFFF;
-            --text-dark: #111827;
-            --text-muted: #6B7280;
-            --border-color: #E5E7EB;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background: var(--bg-main); color: var(--text-dark); min-height: 100vh; padding-bottom: 80px; }
-        
-        header { background: var(--purple-deep); color: white; padding: 1.2rem 2rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .header-container { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8rem; font-weight: 900; color: white; text-decoration: none; letter-spacing: -0.5px; }
-        .logo span { color: var(--purple-accent); }
-        
-        .controls-top { display: flex; gap: 1rem; align-items: center; }
-        .region-selector { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; outline: none; }
-        .region-selector option { background: var(--purple-deep); color: white; }
+    /* 2. BANNERS Y CARRUSEL DE CATEGORÍAS */
+    .hero-slider {
+      margin: 10px 12px;
+      background: linear-gradient(135deg, #3A0B3E 0%, #1A051D 100%);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #4A0E4E;
+    }
+    .hero-slider h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #FFF;
+    }
+    .hero-slider p {
+      font-size: 0.8rem;
+      color: #B39DDB;
+      margin-top: 4px;
+    }
 
-        .btn-cart-header { background: var(--purple-accent); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-        .btn-cart-header:hover { background: #9333EA; }
+    .category-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 4px 12px 12px 12px;
+      scrollbar-width: none;
+    }
+    .category-scroll::-webkit-scrollbar { display: none; }
+    .cat-item {
+      background: #1A051D;
+      border: 1px solid #2A082C;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      color: #E1BEE7;
+    }
+    .cat-item.active {
+      background: #8E24AA;
+      color: #FFF;
+      font-weight: bold;
+      border-color: #E040FB;
+    }
 
-        .hero { background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple-royal) 100%); color: white; padding: 3.5rem 2rem; text-align: center; }
-        .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; font-weight: 800; }
-        .hero p { color: #E9D5FF; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+    /* 3. PARRILLA DE PRODUCTOS EN 2 COLUMNAS */
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 12px 12px 8px 12px;
+      color: #FFF;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 0 12px;
+    }
+    .product-card {
+      background: #1A051D;
+      border: 1px solid #2A082C;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .product-img {
+      width: 100%;
+      height: 120px;
+      object-fit: contain;
+      background: #250728;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .product-title {
+      font-size: 0.8rem;
+      color: #E0E0E0;
+      line-height: 1.2;
+      height: 2.4em;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .product-price {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #E040FB;
+      margin-bottom: 6px;
+    }
+    .shipping-tag {
+      font-size: 0.65rem;
+      color: #00E676;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .buy-btn {
+      background: #8E24AA;
+      color: #FFF;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.75rem;
+      width: 100%;
+    }
 
-        .main-container { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; }
-
-        .categories-nav { display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); }
-        .cat-btn { background: white; border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: 20px; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-        .cat-btn.active, .cat-btn:hover { background: var(--purple-royal); color: white; border-color: var(--purple-royal); }
-
-        .grid-catalog { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-        .card-product { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }
-        .card-product:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-        
-        .badge-serial { background: var(--purple-deep); color: white; font-size: 0.75rem; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 700; align-self: flex-start; margin-bottom: 0.8rem; }
-        .product-img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px; background: #FFFFFF; padding: 0.5rem; cursor: pointer; }
-
-        .product-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-dark); line-height: 1.3; cursor: pointer; }
-        .product-desc-short { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .price-main { font-size: 1.4rem; font-weight: 800; color: var(--purple-royal); margin-bottom: 1rem; }
-        
-        .card-actions { display: flex; gap: 0.5rem; }
-        .btn-view-detail { flex: 1; background: #F3E8FF; color: var(--purple-royal); border: 1px solid var(--purple-royal); padding: 0.7rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .btn-add-cart { flex: 1; background: var(--purple-royal); color: white; border: none; padding: 0.7rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .btn-add-cart:hover { background: var(--purple-deep); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem; }
-        .modal-card { background: white; border-radius: 20px; max-width: 750px; width: 100%; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
-        .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; font-size: 1.5rem; font-weight: bold; border: none; background: none; cursor: pointer; color: var(--text-muted); }
-        .modal-img { width: 100%; height: 220px; object-fit: contain; margin-bottom: 1rem; border-radius: 10px; }
-        
-        .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border-color); gap: 1rem; }
-        .cart-item-info { flex: 2; }
-        .cart-item-title { font-weight: 700; font-size: 0.95rem; }
-        .cart-item-sub { font-size: 0.8rem; color: var(--text-muted); }
-        
-        .qty-controls { display: flex; align-items: center; gap: 0.4rem; background: #F3F4F6; padding: 0.2rem 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
-        .btn-qty { background: white; border: 1px solid var(--border-color); width: 24px; height: 24px; border-radius: 6px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; line-height: 1; }
-        .btn-qty:hover { background: var(--purple-royal); color: white; border-color: var(--purple-royal); }
-        .qty-number { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
-
-        .btn-remove-item { background: #FEE2E2; color: #DC2626; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 700; }
-        .btn-remove-item:hover { background: #FCA5A5; }
-
-        .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-        .form-group { margin-bottom: 0.9rem; }
-        .form-group.full-width { grid-column: span 2; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text-dark); }
-        .form-control { width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.9rem; outline: none; }
-        .form-control:focus { border-color: var(--purple-royal); box-shadow: 0 0 0 2px rgba(91, 19, 99, 0.15); }
-
-        .btn-primary-action { width: 100%; background: var(--purple-royal); color: white; border: none; padding: 0.9rem; border-radius: 10px; font-size: 1.05rem; font-weight: 800; cursor: pointer; margin-top: 1.2rem; transition: background 0.2s; }
-        .btn-primary-action:hover { background: var(--purple-deep); }
-
-        .btn-gateway-external { width: 100%; background: #2563EB; color: white; border: none; padding: 1.1rem; border-radius: 10px; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: 1.2rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem; transition: background 0.2s; }
-        .btn-gateway-external:hover { background: #1D4ED8; }
-
-        .status-box { margin-top: 2rem; padding: 1.2rem; background: #1E293B; color: #38BDF8; border-radius: 12px; font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; }
-    </style>
+    /* 4. BARRA DE NAVEGACIÓN INFERIOR NATIVA (Bottom Nav Bar) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #1A051D;
+      border-top: 1px solid #2A082C;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+    .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #777;
+      font-size: 0.65rem;
+      text-decoration: none;
+    }
+    .nav-link.active {
+      color: #E040FB;
+      font-weight: bold;
+    }
+    .nav-icon {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <a href="#" class="logo">DMKR <span>Audio</span></a>
-            <div class="controls-top">
-                <select class="region-selector" id="regionSelect" onchange="updateCurrencyView(this.value)">
-                    <option value="CO">🇨🇴 Colombia (COP - Con IVA 19%)</option>
-                    <option value="INT">🌎 Internacional (USD - Exento Exportación)</option>
-                </select>
-                <button class="btn-cart-header" onclick="openCartModal()">
-                    🛒 Carrito (<span id="cartCount">0</span>)
-                </button>
-            </div>
-        </div>
-    </header>
 
-    <section class="hero">
-        <h1>DaMaker's Audio — Catálogo Profesional</h1>
-        <p>Guitarras boutique, sintetizadores analógicos, procesamiento de estudio y accesorios premium con trazabilidad por número de serie.</p>
-    </section>
-
-    <main class="main-container">
-        <div class="categories-nav">
-            <button class="cat-btn active" onclick="filterCategory('ALL', this)">Todos los Instrumentos</button>
-            <button class="cat-btn" onclick="filterCategory('Guitarras y Bajos', this)">Guitarras & Bajos</button>
-            <button class="cat-btn" onclick="filterCategory('Sintetizadores y Teclados', this)">Sintetizadores</button>
-            <button class="cat-btn" onclick="filterCategory('Audio Pro e Interfaces', this)">Audio Pro & Estudio</button>
-            <button class="cat-btn" onclick="filterCategory('Accesorios y Pedales', this)">Accesorios & Pedales</button>
-        </div>
-
-        <div class="grid-catalog" id="catalogGrid"></div>
-
-        <div class="status-box" id="responseBox">Consola API Backend DMKR: Esperando interacción de compra...</div>
-    </main>
-
-    <!-- MODAL DE DETALLE -->
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal-card">
-            <button class="close-modal" onclick="closeDetailModal()">&times;</button>
-            <span class="badge-serial" id="modalSerial">S/N: ---</span>
-            <img src="" class="modal-img" id="modalImg" alt="Instrumento">
-            <h2 id="modalTitle">Título del Instrumento</h2>
-            <p id="modalDesc" style="color: var(--text-muted); margin: 0.8rem 0; font-size: 0.95rem;"></p>
-            <div class="price-main" id="modalPrice">$0 COP</div>
-            <button class="btn-primary-action" onclick="addSelectedToCart()">Añadir este Item al Carrito</button>
-        </div>
+  <!-- Cabecera estilo App Móvil -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-logo">DMKR</div>
+      <div class="search-bar">
+        🔍 <input type="text" placeholder="Buscar en DMKR Audio...">
+      </div>
+      <span style="font-size: 1.2rem;">🛒</span>
     </div>
-
-    <!-- MODAL DE CARRITO -->
-    <div class="modal-overlay" id="cartModal">
-        <div class="modal-card">
-            <button class="close-modal" onclick="closeCartModal()">&times;</button>
-            <h2 style="margin-bottom: 1rem;">🛒 Resumen de tu Carrito DMKR</h2>
-            
-            <div id="cartItemsContainer"></div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid var(--border-color);">
-                <h3>Total Estimado:</h3>
-                <div class="price-main" id="cartTotalDisplay" style="margin-bottom: 0;">$0 COP</div>
-            </div>
-
-            <button class="btn-primary-action" onclick="proceedToCheckoutForm()">Continuar con los Datos de Envío</button>
-        </div>
+    <div class="header-location">
+      📍 <span>Enviar a Pasto, Nariño</span>
     </div>
+  </header>
 
-    <!-- MODAL DE CHECKOUT & DATOS DE ENVÍO -->
-    <div class="modal-overlay" id="checkoutModal">
-        <div class="modal-card">
-            <button class="close-modal" onclick="closeCheckoutModal()">&times;</button>
-            <h2 style="margin-bottom: 0.3rem;">📦 Información de Envío y Facturación</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">No necesitas crear una cuenta. Completa tus datos para despachar tu pedido.</p>
-            
-            <form id="shippingForm" onsubmit="event.preventDefault(); submitOrderToBackend();">
-                <div class="checkout-grid">
-                    <div class="form-group">
-                        <label>Nombre Completo / Razón Social *</label>
-                        <input type="text" id="shipName" class="form-control" placeholder="Ej. Gabriel Angulo" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Cédula o NIT (Para Aduana/Factura) *</label>
-                        <input type="text" id="shipDoc" class="form-control" placeholder="Ej. 1.193.033.222" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Correo Electrónico (Notificaciones) *</label>
-                        <input type="email" id="shipEmail" class="form-control" placeholder="correo@ejemplo.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Número de Contacto / Celular *</label>
-                        <input type="tel" id="shipPhone" class="form-control" placeholder="Ej. +57 300 1234567" required>
-                    </div>
-                    <div class="form-group">
-                        <label>País *</label>
-                        <input type="text" id="shipCountry" class="form-control" value="Colombia" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Ciudad *</label>
-                        <input type="text" id="shipCity" class="form-control" value="Pasto" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Código Postal</label>
-                        <input type="text" id="shipZip" class="form-control" placeholder="Ej. 520001">
-                    </div>
-                    <div class="form-group">
-                        <label>Dirección de Residencia Exacta *</label>
-                        <input type="text" id="shipAddress" class="form-control" placeholder="Ej. Carrera 26 #12-49" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Instrucciones Adicionales para el Courier (Opcional)</label>
-                        <input type="text" id="shipNotes" class="form-control" placeholder="Ej. Dejar en recepción o timbre 202">
-                    </div>
-                </div>
+  <!-- Banner Principal -->
+  <section class="hero-slider">
+    <h2>Ofertas de la Semana</h2>
+    <p>Guitarras boutique y procesamiento de estudio con garantía</p>
+  </section>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                    <div>
-                        <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">Total a Pagar:</span>
-                        <strong id="checkoutTotalDisplay" style="font-size: 1.2rem; color: var(--purple-royal);">$0 COP</strong>
-                    </div>
-                    <button type="submit" class="btn-gateway-external" style="margin-top: 0; width: auto; padding: 0.8rem 2rem;">
-                        💳 Continuar a Pasarela de Pagos
-                    </button>
-                </div>
-            </form>
-        </div>
+  <!-- Carrusel de Categorías -->
+  <div class="category-scroll">
+    <div class="cat-item active">Ofertas</div>
+    <div class="cat-item">Guitarras</div>
+    <div class="cat-item">Sintetizadores</div>
+    <div class="cat-item">Pedales</div>
+    <div class="cat-item">Audio Studio</div>
+  </div>
+
+  <!-- Catálogo 2 Columnas -->
+  <div class="section-title">Recomendados para ti</div>
+  <main class="product-grid">
+    <div class="product-card">
+      <img src="img/strat.jpg" alt="Fender Ultra" class="product-img">
+      <div class="product-title">Fender American Ultra Stratocaster</div>
+      <div class="product-price">$11.800.000 COP</div>
+      <div class="shipping-tag">Envío gratis</div>
+      <button class="buy-btn">Agregar</button>
     </div>
+    <div class="product-card">
+      <img src="img/strat.jpg" alt="Gibson Les Paul" class="product-img">
+      <div class="product-title">Gibson Les Paul Standard '50s</div>
+      <div class="product-price">$13.500.000 COP</div>
+      <div class="shipping-tag">Envío gratis</div>
+      <button class="buy-btn">Agregar</button>
+    </div>
+  </main>
 
-    <script>
-        const exchangeRate = 4000.0;
-        const vatTax = 0.19;
-        let selectedProduct = null;
-        let currentRegion = 'CO';
-        let cart = [];
+  <!-- Barra Navegación Inferior -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-link active">
+      <span class="nav-icon">🏠</span>
+      <span>Inicio</span>
+    </a>
+    <a href="#" class="nav-link">
+      <span class="nav-icon">🔍</span>
+      <span>Buscar</span>
+    </a>
+    <a href="#" class="nav-link">
+      <span class="nav-icon">❤️</span>
+      <span>Favoritos</span>
+    </a>
+    <a href="#" class="nav-link">
+      <span class="nav-icon">🔔</span>
+      <span>Notificaciones</span>
+    </a>
+    <a href="#" class="nav-link">
+      <span class="nav-icon">👤</span>
+      <span>Mi Cuenta</span>
+    </a>
+  </nav>
 
-        const rawInventory = [
-            { sku: "SKU-FEN-ULTRA-01", name: "Fender American Ultra Stratocaster HSS", category: "Guitarras y Bajos", serial_number: "US2304921", base_price_cop: 9915966.38, description: "Guitarra eléctrica de alta gama con pastillas Ultra Noiseless y mástil compuesto D.", img_url: "img/strat.jpg" },
-            { sku: "SKU-GIB-LPST-02", name: "Gibson Les Paul Standard '60s", category: "Guitarras y Bajos", serial_number: "GIB-LES-002", base_price_cop: 11344537.81, description: "Sonido clásico de caoba y arce figurado con cápsulas Burstbucker 61.", img_url: "img/lespaul.jpg" },
-            { sku: "SKU-PRS-CU24-03", name: "PRS Custom 24 Ten Top", category: "Guitarras y Bajos", serial_number: "PRS-CU24-03", base_price_cop: 15126050.42, description: "La guitarra insignia de PRS con trémolo patentado y acabado violín superior.", img_url: "img/prs.jpg" },
-            { sku: "SKU-NORD-ST4-88", name: "Nord Stage 4 88 Piano Pro", category: "Sintetizadores y Teclados", serial_number: "ND9920141", base_price_cop: 15546218.48, description: "El teclado de escenario definitivo con motor de síntesis de 3 capas y faders físicos.", img_url: "img/nord.jpg" },
-            { sku: "SKU-MOOG-S37-01", name: "Moog Subsequent 37 Analog Synth", category: "Sintetizadores y Teclados", serial_number: "MOOG-SUB37", base_price_cop: 7563025.21, description: "Sintetizador analógico parafónico de 2 osciladores con sección de filtro Multidrive.", img_url: "img/moog.jpg" },
-            { sku: "SKU-ART-POLY-02", name: "Arturia PolyBrute 6-Voice", category: "Sintetizadores y Teclados", serial_number: "ART-POLY-02", base_price_cop: 10084033.61, description: "Sintetizador polifónico analógico con matriz de modulación y controlador táctil Morphée.", img_url: "img/arturia.jpg" },
-            { sku: "SKU-UA-TWINX-02", name: "Universal Audio Apollo Twin X Duo", category: "Audio Pro e Interfaces", serial_number: "UA8839201", base_price_cop: 4033613.44, description: "Interfaz de audio Thunderbolt con procesado DSP UAD-2 en tiempo real y previos Unison.", img_url: "img/apollo.jpg" },
-            { sku: "SKU-NEU-TLM103", name: "Neumann TLM 103 Studio Set", category: "Audio Pro e Interfaces", serial_number: "NEU-TLM103", base_price_cop: 4621848.74, description: "Micrófono de condensador de diafragma grande con ruido propio ultra bajo para voces.", img_url: "img/neumann.jpg" },
-            { sku: "SKU-GEN-8030C-PR", name: "Genelec 8030C Studio Monitors (Par)", category: "Audio Pro e Interfaces", serial_number: "GEN-8030C", base_price_cop: 5882352.94, description: "Monitores bi-amplificados de alta precisión con caja de aluminio reciclabes MDE.", img_url: "img/genelec.jpg" },
-            { sku: "SKU-STR-TL-01", name: "Strymon Timeline Delay Pedal", category: "Accesorios y Pedales", serial_number: "STR-TIMELINE", base_price_cop: 1890756.30, description: "Pedal de echos y delays de clase estudio con 12 motores analógicos y digitales.", img_url: "img/timeline.jpg" },
-            { sku: "SKU-SHU-SM7B-01", name: "Shure SM7B Cardioid Dynamic Mic", category: "Accesorios y Pedales", serial_number: "SHURE-SM7B", base_price_cop: 1680672.27, description: "El micrófono estándar de la industria para locución, rap y grabación vocal pesada.", img_url: "img/sm7b.jpg" }
-        ];
-
-        function renderCatalog(items) {
-            const grid = document.getElementById('catalogGrid');
-            grid.innerHTML = '';
-
-            items.forEach(item => {
-                const priceFormatted = formatPrice(item.base_price_cop, currentRegion);
-                const card = document.createElement('div');
-                card.className = 'card-product';
-                card.innerHTML = `
-                    <div>
-                        <span class="badge-serial">S/N: ${item.serial_number}</span>
-                        <img src="${item.img_url}" class="product-img" alt="${item.name}" onclick="openDetailModalBySerial('${item.serial_number}')">
-                        <h3 class="product-title" onclick="openDetailModalBySerial('${item.serial_number}')">${item.name}</h3>
-                        <p class="product-desc-short">${item.description}</p>
-                    </div>
-                    <div>
-                        <div class="price-main">${priceFormatted}</div>
-                        <div class="card-actions">
-                            <button class="btn-view-detail" onclick="openDetailModalBySerial('${item.serial_number}')">Detalles</button>
-                            <button class="btn-add-cart" onclick="addToCartBySerial('${item.serial_number}')">+ Carrito</button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function formatPrice(basePriceCop, region) {
-            if (region === 'CO') {
-                const totalCop = basePriceCop * (1 + vatTax);
-                return '$' + Math.round(totalCop).toLocaleString('es-CO') + ' COP (IVA Incl.)';
-            } else {
-                const totalUsd = basePriceCop / exchangeRate;
-                return '$' + totalUsd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD (Exento)';
-            }
-        }
-
-        function updateCurrencyView(region) {
-            currentRegion = region;
-            renderCatalog(rawInventory);
-            renderCartModal();
-        }
-
-        function filterCategory(category, btnElement) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
-            if (category === 'ALL') {
-                renderCatalog(rawInventory);
-            } else {
-                const filtered = rawInventory.filter(i => i.category === category);
-                renderCatalog(filtered);
-            }
-        }
-
-        function openDetailModalBySerial(serialNumber) {
-            const item = rawInventory.find(i => i.serial_number === serialNumber);
-            if (!item) return;
-            selectedProduct = item;
-            document.getElementById('modalSerial').innerText = 'S/N: ' + item.serial_number;
-            document.getElementById('modalImg').src = item.img_url;
-            document.getElementById('modalTitle').innerText = item.name;
-            document.getElementById('modalDesc').innerText = item.description;
-            document.getElementById('modalPrice').innerText = formatPrice(item.base_price_cop, currentRegion);
-            document.getElementById('detailModal').style.display = 'flex';
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').style.display = 'none';
-        }
-
-        function addToCartBySerial(serialNumber) {
-            const item = rawInventory.find(i => i.serial_number === serialNumber);
-            if (!item) return;
-
-            const existingIndex = cart.findIndex(c => c.item.serial_number === serialNumber);
-            if (existingIndex !== -1) {
-                cart[existingIndex].quantity += 1;
-            } else {
-                cart.push({ item: item, quantity: 1 });
-            }
-            updateCartCount();
-        }
-
-        function addSelectedToCart() {
-            if (selectedProduct) {
-                addToCartBySerial(selectedProduct.serial_number);
-                closeDetailModal();
-                openCartModal();
-            }
-        }
-
-        function updateQuantity(serialNumber, delta) {
-            const index = cart.findIndex(c => c.item.serial_number === serialNumber);
-            if (index !== -1) {
-                cart[index].quantity += delta;
-                if (cart[index].quantity <= 0) {
-                    cart.splice(index, 1);
-                }
-            }
-            updateCartCount();
-            renderCartModal();
-        }
-
-        function removeFromCart(serialNumber) {
-            cart = cart.filter(c => c.item.serial_number !== serialNumber);
-            updateCartCount();
-            renderCartModal();
-        }
-
-        function updateCartCount() {
-            const totalUnits = cart.reduce((sum, c) => sum + c.quantity, 0);
-            document.getElementById('cartCount').innerText = totalUnits;
-        }
-
-        function openCartModal() {
-            renderCartModal();
-            document.getElementById('cartModal').style.display = 'flex';
-        }
-
-        function closeCartModal() {
-            document.getElementById('cartModal').style.display = 'none';
-        }
-
-        function renderCartModal() {
-            const container = document.getElementById('cartItemsContainer');
-            container.innerHTML = '';
-
-            if (cart.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-muted); padding: 1.5rem 0; text-align: center;">El carrito está vacío. Agrega instrumentos del catálogo.</p>`;
-                document.getElementById('cartTotalDisplay').innerText = formatPrice(0, currentRegion);
-                return;
-            }
-
-            let totalBaseCop = 0;
-            cart.forEach(entry => {
-                const subtotalBaseItem = entry.item.base_price_cop * entry.quantity;
-                totalBaseCop += subtotalBaseItem;
-                const priceFormattedSubtotal = formatPrice(subtotalBaseItem, currentRegion);
-                
-                const row = document.createElement('div');
-                row.className = 'cart-item-row';
-                row.innerHTML = `
-                    <div class="cart-item-info">
-                        <div class="cart-item-title">${entry.item.name}</div>
-                        <div class="cart-item-sub">S/N: ${entry.item.serial_number} | SKU: ${entry.item.sku}</div>
-                    </div>
-                    <div class="qty-controls">
-                        <button class="btn-qty" onclick="updateQuantity('${entry.item.serial_number}', -1)">-</button>
-                        <span class="qty-number">${entry.quantity}</span>
-                        <button class="btn-qty" onclick="updateQuantity('${entry.item.serial_number}', 1)">+</button>
-                    </div>
-                    <div style="font-weight: 800; color: var(--purple-royal); min-width: 120px; text-align: right;">${priceFormattedSubtotal}</div>
-                    <button class="btn-remove-item" onclick="removeFromCart('${entry.item.serial_number}')">Quitar</button>
-                `;
-                container.appendChild(row);
-            });
-
-            document.getElementById('cartTotalDisplay').innerText = formatPrice(totalBaseCop, currentRegion);
-        }
-
-        function proceedToCheckoutForm() {
-            if (cart.length === 0) {
-                alert("Tu carrito está vacío.");
-                return;
-            }
-            closeCartModal();
-            
-            let totalBaseCop = cart.reduce((sum, c) => sum + (c.item.base_price_cop * c.quantity), 0);
-            document.getElementById('checkoutTotalDisplay').innerText = formatPrice(totalBaseCop, currentRegion);
-            
-            document.getElementById('checkoutModal').style.display = 'flex';
-        }
-
-        function closeCheckoutModal() {
-            document.getElementById('checkoutModal').style.display = 'none';
-        }
-
-        function submitOrderToBackend() {
-            const buyerName = document.getElementById('shipName').value.trim();
-            const buyerDoc = document.getElementById('shipDoc').value.trim();
-            const buyerEmail = document.getElementById('shipEmail').value.trim();
-            
-            alert(`¡Datos guardados con éxito!\nComprador: ${buyerName}\nDocumento: ${buyerDoc}\nCorreo: ${buyerEmail}\n\nListo para conectar la pasarela de pago externa.`);
-            
-            cart = [];
-            updateCartCount();
-            closeCheckoutModal();
-        }
-
-        window.onload = function() {
-            renderCatalog(rawInventory);
-        };
-    </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
 </body>
 </html>
