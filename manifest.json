@@ -1,23 +1,29 @@
 {
-  "name": "DMKR Audio Mobile",
-  "short_name": "DMKR",
-  "start_url": "/",
+  "id": "/",
+  "name": "DMKR Audio",
+  "short_name": "DMKR Audio",
+  "description": "Catálogo de audio DMKR Audio: encuentra los mejores productos en una experiencia móvil rápida.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0F0311",
-  "theme_color": "#2A082C",
+  "background_color": "#ffffff",
+  "theme_color": "#ffe600",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["shopping"],
   "icons": [
     {
-      "src": "/img/logo.png",
+      "src": "/img/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/img/logo.png",
+      "src": "/img/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
