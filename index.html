@@ -6,9 +6,6 @@
   <title>DMKR Audio</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2A082C">
-  <!-- Soportes nativos para pantalla completa -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     * {
       box-sizing: border-box;
@@ -20,13 +17,14 @@
     body {
       background-color: #0F0311;
       color: #FFFFFF;
-      padding-top: 104px; /* Espacio para la cabecera fija doble */
-      padding-bottom: 65px; /* Espacio para la barra inferior */
-      overflow-x: hidden;
+      padding-top: 104px;
+      padding-bottom: 75px;
+      overflow-y: auto !important; /* Fuerza el desplazamiento vertical */
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y; /* Permite hacer scroll libremente */
       width: 100vw;
     }
 
-    /* 1. CABECERA TIPO MERCADO LIBRE (Fija Arriba) */
     .app-header {
       position: fixed;
       top: 0;
@@ -34,21 +32,19 @@
       right: 0;
       background-color: #2A082C;
       z-index: 1000;
-      padding: 8px 12px 10px 12px;
+      padding: 10px 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
     .header-top {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .brand-logo {
       font-size: 1.1rem;
       font-weight: 900;
       color: #E040FB;
-      letter-spacing: -0.5px;
-      white-space: nowrap;
     }
     .search-bar {
       flex: 1;
@@ -58,7 +54,6 @@
       padding: 6px 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
       color: #888;
       font-size: 0.85rem;
     }
@@ -71,31 +66,19 @@
       font-size: 0.85rem;
     }
     .header-location {
-      display: flex;
-      align-items: center;
-      gap: 4px;
       font-size: 0.75rem;
       color: #D1C4E9;
     }
 
-    /* 2. BANNERS Y CARRUSEL DE CATEGORÍAS */
     .hero-slider {
-      margin: 10px 12px;
+      margin: 12px;
       background: linear-gradient(135deg, #3A0B3E 0%, #1A051D 100%);
       border-radius: 12px;
       padding: 16px;
       border: 1px solid #4A0E4E;
     }
-    .hero-slider h2 {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #FFF;
-    }
-    .hero-slider p {
-      font-size: 0.8rem;
-      color: #B39DDB;
-      margin-top: 4px;
-    }
+    .hero-slider h2 { font-size: 1.2rem; font-weight: 800; color: #FFF; }
+    .hero-slider p { font-size: 0.8rem; color: #B39DDB; margin-top: 4px; }
 
     .category-scroll {
       display: flex;
@@ -114,20 +97,10 @@
       white-space: nowrap;
       color: #E1BEE7;
     }
-    .cat-item.active {
-      background: #8E24AA;
-      color: #FFF;
-      font-weight: bold;
-      border-color: #E040FB;
-    }
+    .cat-item.active { background: #8E24AA; color: #FFF; font-weight: bold; border-color: #E040FB; }
 
-    /* 3. PARRILLA DE PRODUCTOS EN 2 COLUMNAS */
-    .section-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin: 12px 12px 8px 12px;
-      color: #FFF;
-    }
+    .section-title { font-size: 1rem; font-weight: 700; margin: 12px 12px 8px 12px; color: #FFF; }
+    
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -151,38 +124,23 @@
       border-radius: 6px;
       margin-bottom: 8px;
     }
-    .product-title {
-      font-size: 0.8rem;
-      color: #E0E0E0;
-      line-height: 1.2;
-      height: 2.4em;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-    .product-price {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #E040FB;
-      margin-bottom: 6px;
-    }
-    .shipping-tag {
-      font-size: 0.65rem;
-      color: #00E676;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+    .product-title { font-size: 0.8rem; color: #E0E0E0; line-height: 1.2; height: 2.4em; overflow: hidden; margin-bottom: 6px; }
+    .product-price { font-size: 0.95rem; font-weight: 800; color: #E040FB; margin-bottom: 6px; }
+    .shipping-tag { font-size: 0.65rem; color: #00E676; font-weight: bold; margin-bottom: 8px; }
+    
     .buy-btn {
       background: #8E24AA;
       color: #FFF;
       border: none;
-      padding: 8px;
+      padding: 10px;
       border-radius: 6px;
       font-weight: bold;
       font-size: 0.75rem;
       width: 100%;
+      cursor: pointer;
     }
+    .buy-btn:active { background: #AB47BC; }
 
-    /* 4. BARRA DE NAVEGACIÓN INFERIOR NATIVA (Bottom Nav Bar) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -203,20 +161,14 @@
       color: #777;
       font-size: 0.65rem;
       text-decoration: none;
+      cursor: pointer;
     }
-    .nav-link.active {
-      color: #E040FB;
-      font-weight: bold;
-    }
-    .nav-icon {
-      font-size: 1.2rem;
-      margin-bottom: 2px;
-    }
+    .nav-link.active { color: #E040FB; font-weight: bold; }
+    .nav-icon { font-size: 1.2rem; margin-bottom: 2px; }
   </style>
 </head>
 <body>
 
-  <!-- Cabecera estilo App Móvil -->
   <header class="app-header">
     <div class="header-top">
       <div class="brand-logo">DMKR</div>
@@ -225,27 +177,21 @@
       </div>
       <span style="font-size: 1.2rem;">🛒</span>
     </div>
-    <div class="header-location">
-      📍 <span>Enviar a Pasto, Nariño</span>
-    </div>
+    <div class="header-location">📍 Enviar a Pasto, Nariño</div>
   </header>
 
-  <!-- Banner Principal -->
   <section class="hero-slider">
     <h2>Ofertas de la Semana</h2>
     <p>Guitarras boutique y procesamiento de estudio con garantía</p>
   </section>
 
-  <!-- Carrusel de Categorías -->
   <div class="category-scroll">
-    <div class="cat-item active">Ofertas</div>
-    <div class="cat-item">Guitarras</div>
-    <div class="cat-item">Sintetizadores</div>
-    <div class="cat-item">Pedales</div>
-    <div class="cat-item">Audio Studio</div>
+    <div class="cat-item active" onclick="alert('Categoría seleccionada: Ofertas')">Ofertas</div>
+    <div class="cat-item" onclick="alert('Categoría seleccionada: Guitarras')">Guitarras</div>
+    <div class="cat-item" onclick="alert('Categoría seleccionada: Sintetizadores')">Sintetizadores</div>
+    <div class="cat-item" onclick="alert('Categoría seleccionada: Pedales')">Pedales</div>
   </div>
 
-  <!-- Catálogo 2 Columnas -->
   <div class="section-title">Recomendados para ti</div>
   <main class="product-grid">
     <div class="product-card">
@@ -253,36 +199,35 @@
       <div class="product-title">Fender American Ultra Stratocaster</div>
       <div class="product-price">$11.800.000 COP</div>
       <div class="shipping-tag">Envío gratis</div>
-      <button class="buy-btn">Agregar</button>
+      <button class="buy-btn" onclick="alert('¡Producto agregado al carrito!')">Agregar</button>
     </div>
     <div class="product-card">
       <img src="img/strat.jpg" alt="Gibson Les Paul" class="product-img">
       <div class="product-title">Gibson Les Paul Standard '50s</div>
       <div class="product-price">$13.500.000 COP</div>
       <div class="shipping-tag">Envío gratis</div>
-      <button class="buy-btn">Agregar</button>
+      <button class="buy-btn" onclick="alert('¡Producto agregado al carrito!')">Agregar</button>
     </div>
   </main>
 
-  <!-- Barra Navegación Inferior -->
   <nav class="bottom-nav">
-    <a href="#" class="nav-link active">
+    <a class="nav-link active" onclick="alert('Ya estás en Inicio')">
       <span class="nav-icon">🏠</span>
       <span>Inicio</span>
     </a>
-    <a href="#" class="nav-link">
+    <a class="nav-link" onclick="alert('Abriendo buscador...')">
       <span class="nav-icon">🔍</span>
       <span>Buscar</span>
     </a>
-    <a href="#" class="nav-link">
+    <a class="nav-link" onclick="alert('Sección de favoritos')">
       <span class="nav-icon">❤️</span>
       <span>Favoritos</span>
     </a>
-    <a href="#" class="nav-link">
+    <a class="nav-link" onclick="alert('Sin notificaciones nuevas')">
       <span class="nav-icon">🔔</span>
       <span>Notificaciones</span>
     </a>
-    <a href="#" class="nav-link">
+    <a class="nav-link" onclick="alert('Perfil de usuario DMKR')">
       <span class="nav-icon">👤</span>
       <span>Mi Cuenta</span>
     </a>
