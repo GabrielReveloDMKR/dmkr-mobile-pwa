@@ -8,15 +8,15 @@
   "theme_color": "#2A082C",
   "icons": [
     {
-      "src": "/img/strat.jpg",
+      "src": "/img/logo.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/img/strat.jpg",
+      "src": "/img/logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
