@@ -47,11 +47,11 @@
 
     .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 12px}
     .card{position:relative;background:#1A051D;border:1px solid #2A082C;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between}
-    .pimg{width:100%;height:120px;object-fit:contain;background:#fff;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:3rem}
+    .pimg{width:100%;height:120px;object-fit:contain;background:#250728;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:3rem}
     .fav{position:absolute;top:14px;right:14px;background:rgba(15,3,17,.7);border:none;border-radius:50%;width:32px;height:32px;font-size:1rem;color:#fff;z-index:1}
-    .pt{font-size:.8rem;color:#E0E0E0;line-height:1.2;height:3.6em;overflow:hidden;margin-bottom:6px}
-    .pp{font-size:.9rem;font-weight:800;color:#E040FB;margin-bottom:8px;line-height:1.25}
-    .pp small{display:block;font-size:.65rem;font-weight:700;color:#B39DDB}
+    .pt{font-size:.8rem;color:#E0E0E0;line-height:1.2;height:2.4em;overflow:hidden;margin-bottom:6px}
+    .pp{font-size:.95rem;font-weight:800;color:#E040FB;margin-bottom:6px}
+    .ship{font-size:.65rem;color:#00E676;font-weight:700;margin-bottom:8px}
     .buy{background:#8E24AA;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:700;font-size:.75rem;width:100%}
     .buy:active{background:#AB47BC;transform:scale(.97)}
 
@@ -190,36 +190,29 @@
 
 <script>
 (function () {
-  // ===== CATÁLOGO (idéntico al de la página web) =====
   var PRODUCTS = [
-    {id:"US2304921",   name:"Fender American Ultra Stratocaster HSS", cat:"Guitarras & Bajos",    price:11800000, e:"🎸", img:"/img/strat.jpg"},
-    {id:"GIB-LES-002", name:"Gibson Les Paul Standard '60s",          cat:"Guitarras & Bajos",    price:13500000, e:"🎸", img:"/img/lespaul.jpg"},
-    {id:"PRS-CU24-03", name:"PRS Custom 24 Ten Top",                  cat:"Guitarras & Bajos",    price:18000000, e:"🎸", img:"/img/prs.jpg"},
-    {id:"ND9920141",   name:"Nord Stage 4 88 Piano Pro",              cat:"Sintetizadores",       price:18500000, e:"🎹", img:"/img/nord.jpg"},
-    {id:"MOOG-SUB37",  name:"Moog Subsequent 37 Analog Synth",        cat:"Sintetizadores",       price:9000000,  e:"🎹", img:"/img/moog.jpg"},
-    {id:"ART-POLY-02", name:"Arturia PolyBrute 6-Voice",              cat:"Sintetizadores",       price:12000000, e:"🎹", img:"/img/arturia.jpg"},
-    {id:"UA8839201",   name:"Universal Audio Apollo Twin X Duo",      cat:"Audio Pro & Estudio",  price:4800000,  e:"🎚️", img:"/img/apollo.jpg"},
-    {id:"NEU-TLM103",  name:"Neumann TLM 103 Studio Set",             cat:"Audio Pro & Estudio",  price:5500000,  e:"🎙️", img:"/img/neumann.jpg"},
-    {id:"GEN-8030C",   name:"Genelec 8030C Studio Monitors (Par)",    cat:"Audio Pro & Estudio",  price:7000000,  e:"🔊", img:"/img/genelec.jpg"},
-    {id:"STR-TIMELINE",name:"Strymon Timeline Delay Pedal",           cat:"Accesorios & Pedales", price:2250000,  e:"🎛️", img:"/img/timeline.jpg"},
-    {id:"SHURE-SM7B",  name:"Shure SM7B Cardioid Dynamic Mic",        cat:"Audio Pro & Estudio",  price:2000000,  e:"🎙️", img:"/img/sm7b.jpg"}
+    {id:1,name:"Fender American Ultra Stratocaster",cat:"Guitarras",price:11800000,e:"🎸",img:"/img/strat.jpg"},
+    {id:2,name:"Gibson Les Paul Standard '50s",cat:"Guitarras",price:13500000,e:"🎸",img:"/img/lespaul.jpg"},
+    {id:3,name:"Yamaha Pacifica 112V",cat:"Guitarras",price:1750000,e:"🎸",img:"/img/pacifica.jpg"},
+    {id:4,name:"Korg Minilogue XD",cat:"Sintetizadores",price:3900000,e:"🎹",img:"/img/minilogue.jpg"},
+    {id:5,name:"Moog Subsequent 25",cat:"Sintetizadores",price:7600000,e:"🎹",img:"/img/moog.jpg"},
+    {id:6,name:"Boss DS-1 Distortion",cat:"Pedales",price:520000,e:"🎛️",img:"/img/boss-ds1.jpg"},
+    {id:7,name:"Ibanez Tube Screamer TS9",cat:"Pedales",price:690000,e:"🎛️",img:"/img/tubescreamer.jpg"},
+    {id:8,name:"Strymon Timeline Delay",cat:"Pedales",price:2850000,e:"🎛️",img:"/img/timeline.jpg"}
   ];
-  var CATS = ["Todos los Instrumentos","Guitarras & Bajos","Sintetizadores","Audio Pro & Estudio","Accesorios & Pedales"];
-  var ALL = CATS[0];
+  var CATS = ["Ofertas","Guitarras","Sintetizadores","Pedales"];
   var VALID = {home:1,search:1,favs:1,notifs:1,account:1,cart:1};
 
   var $ = function (id) { return document.getElementById(id); };
   function load(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  function find(id) { return PRODUCTS.filter(function (p) { return p.id === id; })[0]; }
 
-  // Claves nuevas (v2) para no mezclar con el carrito/favoritos viejos; además se limpian ids inexistentes
-  var favs = load("dmkr_favs_v2", []).filter(function (id) { return find(id); });
-  var cart = load("dmkr_cart_v2", {});
-  Object.keys(cart).forEach(function (id) { if (!find(id)) delete cart[id]; });
-  var cat = ALL, view = "home", toastTimer;
+  var favs = load("dmkr_favs", []);
+  var cart = load("dmkr_cart", {});
+  var cat = "Ofertas", view = "home", toastTimer;
 
   function money(n) { return "$" + n.toLocaleString("es-CO") + " COP"; }
+  function find(id) { return PRODUCTS.filter(function (p) { return p.id === id; })[0]; }
 
   function toast(msg) {
     var t = $("toast"); t.textContent = msg; t.classList.add("show");
@@ -237,7 +230,8 @@
       '<button class="fav" data-fav="' + p.id + '" aria-label="Favorito">' + (isFav ? "❤️" : "🤍") + '</button>' +
       imgHTML(p) +
       '<div class="pt">' + p.name + '</div>' +
-      '<div class="pp">' + money(p.price) + '<small>(IVA Incl.)</small></div>' +
+      '<div class="pp">' + money(p.price) + '</div>' +
+      '<div class="ship">Envío gratis</div>' +
       '<button class="buy" data-add="' + p.id + '">Agregar</button></div>';
   }
 
@@ -260,8 +254,8 @@
     $("cats").innerHTML = CATS.map(function (c) {
       return '<button class="cat' + (c === cat ? " active" : "") + '" data-cat="' + c + '">' + c + '</button>';
     }).join("");
-    var list = cat === ALL ? PRODUCTS : PRODUCTS.filter(function (p) { return p.cat === cat; });
-    $("homeTitle").textContent = cat === ALL ? "Recomendados para ti" : cat;
+    var list = cat === "Ofertas" ? PRODUCTS : PRODUCTS.filter(function (p) { return p.cat === cat; });
+    $("homeTitle").textContent = cat === "Ofertas" ? "Recomendados para ti" : cat;
     $("homeGrid").innerHTML = grid(list, "📦", "No hay productos en esta categoría.");
   }
 
@@ -282,11 +276,11 @@
     if (!ids.length) { $("cartList").innerHTML = '<div class="empty"><b>🛒</b>Tu carrito está vacío.</div>'; return; }
     var total = 0;
     var rows = ids.map(function (id) {
-      var p = find(id), q = cart[id]; total += p.price * q;
-      return '<div class="row">' + imgHTML(p) + '<div class="info"><div class="pt">' + p.name + '</div><div class="pp" style="margin:0">' + money(p.price) + '<small>(IVA Incl.)</small></div>' +
+      var p = find(+id), q = cart[id]; total += p.price * q;
+      return '<div class="row">' + imgHTML(p) + '<div class="info"><div class="pt">' + p.name + '</div><div class="pp" style="margin:0">' + money(p.price) + '</div>' +
         '<div class="qty"><button data-dec="' + id + '">−</button><b>' + q + '</b><button data-inc="' + id + '">+</button></div></div></div>';
     }).join("");
-    $("cartList").innerHTML = rows + '<div class="total"><span>Total</span><span>' + money(total) + ' (IVA Incl.)</span></div>' +
+    $("cartList").innerHTML = rows + '<div class="total"><span>Total</span><span>' + money(total) + '</span></div>' +
       '<button class="pay" data-pay="1">Finalizar compra</button>';
   }
 
@@ -322,18 +316,18 @@
     }
     if (t.hasAttribute("data-cat")) { cat = t.getAttribute("data-cat"); renderHome(); return; }
     if (t.hasAttribute("data-fav")) {
-      var id = t.getAttribute("data-fav"), i = favs.indexOf(id);
+      var id = +t.getAttribute("data-fav"), i = favs.indexOf(id);
       if (i > -1) { favs.splice(i, 1); toast("Quitado de favoritos"); } else { favs.push(id); toast("Agregado a favoritos ❤️"); }
-      save("dmkr_favs_v2", favs); renderAll(); return;
+      save("dmkr_favs", favs); renderAll(); return;
     }
     if (t.hasAttribute("data-add")) {
       var a = t.getAttribute("data-add"); cart[a] = (cart[a] || 0) + 1;
-      save("dmkr_cart_v2", cart); badges(); toast("Agregado al carrito 🛒"); return;
+      save("dmkr_cart", cart); badges(); toast("Agregado al carrito 🛒"); return;
     }
-    if (t.hasAttribute("data-inc")) { cart[t.getAttribute("data-inc")]++; save("dmkr_cart_v2", cart); renderCart(); badges(); return; }
+    if (t.hasAttribute("data-inc")) { cart[t.getAttribute("data-inc")]++; save("dmkr_cart", cart); renderCart(); badges(); return; }
     if (t.hasAttribute("data-dec")) {
       var d = t.getAttribute("data-dec"); cart[d]--; if (cart[d] <= 0) delete cart[d];
-      save("dmkr_cart_v2", cart); renderCart(); badges(); return;
+      save("dmkr_cart", cart); renderCart(); badges(); return;
     }
     if (t.hasAttribute("data-pay")) openCheckout();
   });
@@ -344,7 +338,7 @@
   var ckOpen = false;
 
   function cartTotal() {
-    return Object.keys(cart).reduce(function (s, id) { return s + find(id).price * cart[id]; }, 0);
+    return Object.keys(cart).reduce(function (s, id) { return s + find(+id).price * cart[id]; }, 0);
   }
   function openCheckout() {
     if (!cartCount()) { toast("Tu carrito está vacío"); return; }
@@ -362,12 +356,12 @@
     e.preventDefault();
     var f = e.target, data = {};
     ["nombre","documento","correo","celular","pais","ciudad","postal","direccion","notas"].forEach(function (n) { data[n] = f.elements[n].value.trim(); });
-    var items = Object.keys(cart).map(function (id) { var p = find(id); return { producto: p.name, cantidad: cart[id], precio: p.price }; });
+    var items = Object.keys(cart).map(function (id) { var p = find(+id); return { producto: p.name, cantidad: cart[id], precio: p.price }; });
     save("dmkr_last_order", { cliente: data, items: items, total: cartTotal(), fecha: new Date().toISOString() });
     if (PAYMENT_URL) {
       window.open(PAYMENT_URL, "_blank");
     } else {
-      cart = {}; save("dmkr_cart_v2", cart);
+      cart = {}; save("dmkr_cart", cart);
       closeCheckout(); renderCart(); badges();
       toast("Datos recibidos. Te contactaremos para coordinar el pago");
     }
