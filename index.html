@@ -10,8 +10,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DMKR Audio">
-  <link rel="icon" type="image/png" href="/img/logo.png">
-  <link rel="apple-touch-icon" href="/img/logo.png">
+  <link rel="icon" type="image/png" href="/img/icon-192.png">
+  <link rel="apple-touch-icon" href="/img/icon-192.png">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
     html{-webkit-text-size-adjust:100%;overscroll-behavior-y:none;background:#0F0311;scroll-behavior:smooth}
@@ -76,4 +76,321 @@
     .nav.active .i{filter:none;opacity:1;transform:scale(1.15)}
     .nav .badge{top:0;right:-2px}
 
-    .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#8E24AA;color:#fff;padding:10px 18px;border-radius:20px;font-size:.8rem;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:200
+    .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#8E24AA;color:#fff;padding:10px 18px;border-radius:20px;font-size:.8rem;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:2000;max-width:90%;text-align:center}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .ck{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.65);display:none;align-items:flex-end}
+    .ck.open{display:flex}
+    .sheet{background:#1A051D;border-top:1px solid #4A0E4E;border-radius:18px 18px 0 0;width:100%;max-height:92vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;animation:up .28s ease}
+    @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+    .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 16px 4px}
+    .sheet-head h3{font-size:1.05rem}
+    .sheet-sub{font-size:.78rem;color:#B39DDB;padding:0 16px 8px}
+    .xbtn{background:none;border:none;color:#fff;font-size:1.4rem;padding:0 4px}
+    .ckform{padding:4px 16px 0}
+    .ckform label{display:block;font-size:.78rem;font-weight:700;color:#E1BEE7;margin:12px 0 5px}
+    .ckform input,.ckform textarea{width:100%;background:#0F0311;border:1px solid #4A0E4E;border-radius:8px;color:#fff;padding:11px 12px;font-size:16px;outline:none;-webkit-user-select:text;user-select:text}
+    .ckform input:focus,.ckform textarea:focus{border-color:#E040FB}
+    .ckform textarea{resize:none;height:64px}
+    .ckfoot{position:sticky;bottom:0;background:#1A051D;border-top:1px solid #2A082C;margin:16px -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+    .cktotal{display:flex;justify-content:space-between;align-items:baseline;font-size:.8rem;color:#B39DDB;margin-bottom:10px}
+    .cktotal b{font-size:1.05rem;color:#fff}
+    .gopay{width:100%;background:#2563EB;color:#fff;border:none;border-radius:10px;padding:14px;font-weight:800;font-size:.95rem}
+    .gopay:active{transform:scale(.98)}
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-top">
+    <div class="brand-logo" data-go="home">DMKR</div>
+    <div class="search-bar">🔍 <input id="q" type="search" placeholder="Buscar en DMKR Audio..." autocomplete="off"></div>
+    <button class="cart-btn" data-go="cart" aria-label="Carrito">🛒<span class="badge zero" id="cartBadge"></span></button>
+  </div>
+  <div class="header-location">📍 Enviar a Pasto, Nariño</div>
+</header>
+
+<main>
+  <section class="view" id="v-home">
+    <div class="hero"><h2>Ofertas de la Semana</h2><p>Guitarras boutique y procesamiento de estudio con garantía</p></div>
+    <div class="cats" id="cats"></div>
+    <div class="title" id="homeTitle">Recomendados para ti</div>
+    <div class="grid" id="homeGrid"></div>
+  </section>
+
+  <section class="view" id="v-search">
+    <div class="title" id="searchTitle">Buscar</div>
+    <div class="grid" id="searchGrid"></div>
+  </section>
+
+  <section class="view" id="v-favs">
+    <div class="title">Tus favoritos</div>
+    <div class="grid" id="favGrid"></div>
+  </section>
+
+  <section class="view" id="v-notifs">
+    <div class="title">Notificaciones</div>
+    <div class="note">🔥 Nuevas ofertas en guitarras<small>Hace 1 hora</small></div>
+    <div class="note">🚚 Envío gratis en todos los pedidos a Nariño<small>Hoy</small></div>
+    <div class="note">🎛️ Llegaron pedales de efectos nuevos<small>Ayer</small></div>
+  </section>
+
+  <section class="view" id="v-account">
+    <div class="profile"><div class="avatar">👤</div><b>Mi cuenta DMKR</b></div>
+    <button class="menu" data-go="favs"><span>❤️ Mis favoritos</span><span id="accFav">›</span></button>
+    <button class="menu" data-go="cart"><span>🛒 Mi carrito</span><span id="accCart">›</span></button>
+    <button class="menu" data-go="notifs"><span>🔔 Notificaciones</span><span>›</span></button>
+  </section>
+
+  <section class="view" id="v-cart">
+    <div class="title">Mi carrito</div>
+    <div id="cartList"></div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav" data-go="home"><span class="i">🏠</span>Inicio</button>
+  <button class="nav" data-go="search"><span class="i">🔍</span>Buscar</button>
+  <button class="nav" data-go="favs"><span class="i">❤️</span>Favoritos<span class="badge zero" id="favBadge"></span></button>
+  <button class="nav" data-go="notifs"><span class="i">🔔</span>Notificaciones</button>
+  <button class="nav" data-go="account"><span class="i">👤</span>Mi Cuenta</button>
+</nav>
+
+<div class="ck" id="ck">
+  <div class="sheet">
+    <div class="sheet-head"><h3>📦 Información de Envío y Facturación</h3><button class="xbtn" id="ckClose" type="button" aria-label="Cerrar">✕</button></div>
+    <div class="sheet-sub">No necesitas crear una cuenta. Completa tus datos para despachar tu pedido.</div>
+    <form class="ckform" id="ckForm">
+      <label>Nombre Completo / Razón Social *</label>
+      <input name="nombre" required placeholder="Ej. Gabriel Angulo" autocomplete="name">
+      <label>Cédula o NIT (Para Aduana/Factura) *</label>
+      <input name="documento" required inputmode="numeric" placeholder="Ej. 1.193.033.222">
+      <label>Correo Electrónico (Notificaciones) *</label>
+      <input name="correo" type="email" required placeholder="correo@ejemplo.com" autocomplete="email">
+      <label>Número de Contacto / Celular *</label>
+      <input name="celular" type="tel" required placeholder="Ej. +57 300 1234567" autocomplete="tel">
+      <label>País *</label>
+      <input name="pais" required value="Colombia">
+      <label>Ciudad *</label>
+      <input name="ciudad" required value="Pasto">
+      <label>Código Postal</label>
+      <input name="postal" inputmode="numeric" placeholder="Ej. 520001">
+      <label>Dirección de Residencia Exacta *</label>
+      <input name="direccion" required placeholder="Ej. Carrera 26 #12-49" autocomplete="street-address">
+      <label>Instrucciones Adicionales para el Courier (Opcional)</label>
+      <textarea name="notas" placeholder="Ej. Dejar en recepción o timbre 202"></textarea>
+      <div class="ckfoot">
+        <div class="cktotal"><span>Total a Pagar:</span><b id="ckTotal"></b></div>
+        <button class="gopay" type="submit">💳 Continuar a Pasarela de Pagos</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  // ===== CATÁLOGO (idéntico al de la página web) =====
+  var PRODUCTS = [
+    {id:"US2304921",   name:"Fender American Ultra Stratocaster HSS", cat:"Guitarras & Bajos",    price:11800000, e:"🎸", img:"/img/strat.jpg"},
+    {id:"GIB-LES-002", name:"Gibson Les Paul Standard '60s",          cat:"Guitarras & Bajos",    price:13500000, e:"🎸", img:"/img/lespaul.jpg"},
+    {id:"PRS-CU24-03", name:"PRS Custom 24 Ten Top",                  cat:"Guitarras & Bajos",    price:18000000, e:"🎸", img:"/img/prs.jpg"},
+    {id:"ND9920141",   name:"Nord Stage 4 88 Piano Pro",              cat:"Sintetizadores",       price:18500000, e:"🎹", img:"/img/nord.jpg"},
+    {id:"MOOG-SUB37",  name:"Moog Subsequent 37 Analog Synth",        cat:"Sintetizadores",       price:9000000,  e:"🎹", img:"/img/moog.jpg"},
+    {id:"ART-POLY-02", name:"Arturia PolyBrute 6-Voice",              cat:"Sintetizadores",       price:12000000, e:"🎹", img:"/img/arturia.jpg"},
+    {id:"UA8839201",   name:"Universal Audio Apollo Twin X Duo",      cat:"Audio Pro & Estudio",  price:4800000,  e:"🎚️", img:"/img/apollo.jpg"},
+    {id:"NEU-TLM103",  name:"Neumann TLM 103 Studio Set",             cat:"Audio Pro & Estudio",  price:5500000,  e:"🎙️", img:"/img/neumann.jpg"},
+    {id:"GEN-8030C",   name:"Genelec 8030C Studio Monitors (Par)",    cat:"Audio Pro & Estudio",  price:7000000,  e:"🔊", img:"/img/genelec.jpg"},
+    {id:"STR-TIMELINE",name:"Strymon Timeline Delay Pedal",           cat:"Accesorios & Pedales", price:2250000,  e:"🎛️", img:"/img/timeline.jpg"},
+    {id:"SHURE-SM7B",  name:"Shure SM7B Cardioid Dynamic Mic",        cat:"Audio Pro & Estudio",  price:2000000,  e:"🎙️", img:"/img/sm7b.jpg"}
+  ];
+  var CATS = ["Todos los Instrumentos","Guitarras & Bajos","Sintetizadores","Audio Pro & Estudio","Accesorios & Pedales"];
+  var ALL = CATS[0];
+  var VALID = {home:1,search:1,favs:1,notifs:1,account:1,cart:1};
+
+  var $ = function (id) { return document.getElementById(id); };
+  function load(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function find(id) { return PRODUCTS.filter(function (p) { return p.id === id; })[0]; }
+
+  // Claves nuevas (v2) para no mezclar con el carrito/favoritos viejos; además se limpian ids inexistentes
+  var favs = load("dmkr_favs_v2", []).filter(function (id) { return find(id); });
+  var cart = load("dmkr_cart_v2", {});
+  Object.keys(cart).forEach(function (id) { if (!find(id)) delete cart[id]; });
+  var cat = ALL, view = "home", toastTimer;
+
+  function money(n) { return "$" + n.toLocaleString("es-CO") + " COP"; }
+
+  function toast(msg) {
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 1600);
+  }
+
+  function imgHTML(p) {
+    if (p.img) return '<img class="pimg" src="' + p.img + '" alt="' + p.name + '" onerror="this.outerHTML=\'<div class=&quot;pimg&quot;>' + p.e + '</div>\'">';
+    return '<div class="pimg">' + p.e + '</div>';
+  }
+
+  function card(p) {
+    var isFav = favs.indexOf(p.id) > -1;
+    return '<div class="card">' +
+      '<button class="fav" data-fav="' + p.id + '" aria-label="Favorito">' + (isFav ? "❤️" : "🤍") + '</button>' +
+      imgHTML(p) +
+      '<div class="pt">' + p.name + '</div>' +
+      '<div class="pp">' + money(p.price) + '<small>(IVA Incl.)</small></div>' +
+      '<button class="buy" data-add="' + p.id + '">Agregar</button></div>';
+  }
+
+  function grid(list, icon, msg) {
+    if (!list.length) return '<div class="empty" style="grid-column:1/-1"><b>' + icon + '</b>' + msg + '</div>';
+    return list.map(card).join("");
+  }
+
+  function cartCount() { return Object.keys(cart).reduce(function (s, k) { return s + cart[k]; }, 0); }
+
+  function badges() {
+    var c = cartCount(), f = favs.length;
+    $("cartBadge").textContent = c || ""; $("cartBadge").classList.toggle("zero", !c);
+    $("favBadge").textContent = f || ""; $("favBadge").classList.toggle("zero", !f);
+    $("accFav").textContent = f ? f + " ›" : "›";
+    $("accCart").textContent = c ? c + " ›" : "›";
+  }
+
+  function renderHome() {
+    $("cats").innerHTML = CATS.map(function (c) {
+      return '<button class="cat' + (c === cat ? " active" : "") + '" data-cat="' + c + '">' + c + '</button>';
+    }).join("");
+    var list = cat === ALL ? PRODUCTS : PRODUCTS.filter(function (p) { return p.cat === cat; });
+    $("homeTitle").textContent = cat === ALL ? "Recomendados para ti" : cat;
+    $("homeGrid").innerHTML = grid(list, "📦", "No hay productos en esta categoría.");
+  }
+
+  function renderSearch() {
+    var raw = $("q").value.trim(), q = raw.toLowerCase();
+    var list = q ? PRODUCTS.filter(function (p) { return (p.name + " " + p.cat).toLowerCase().indexOf(q) > -1; }) : PRODUCTS;
+    $("searchTitle").textContent = q ? "Resultados para \"" + raw + "\"" : "Todos los productos";
+    $("searchGrid").innerHTML = grid(list, "🔍", "No encontramos resultados.<br>Prueba con otra palabra.");
+  }
+
+  function renderFavs() {
+    var list = PRODUCTS.filter(function (p) { return favs.indexOf(p.id) > -1; });
+    $("favGrid").innerHTML = grid(list, "🤍", "Aún no tienes favoritos.<br>Toca el corazón en un producto para guardarlo.");
+  }
+
+  function renderCart() {
+    var ids = Object.keys(cart);
+    if (!ids.length) { $("cartList").innerHTML = '<div class="empty"><b>🛒</b>Tu carrito está vacío.</div>'; return; }
+    var total = 0;
+    var rows = ids.map(function (id) {
+      var p = find(id), q = cart[id]; total += p.price * q;
+      return '<div class="row">' + imgHTML(p) + '<div class="info"><div class="pt">' + p.name + '</div><div class="pp" style="margin:0">' + money(p.price) + '<small>(IVA Incl.)</small></div>' +
+        '<div class="qty"><button data-dec="' + id + '">−</button><b>' + q + '</b><button data-inc="' + id + '">+</button></div></div></div>';
+    }).join("");
+    $("cartList").innerHTML = rows + '<div class="total"><span>Total</span><span>' + money(total) + ' (IVA Incl.)</span></div>' +
+      '<button class="pay" data-pay="1">Finalizar compra</button>';
+  }
+
+  function renderAll() { renderHome(); renderSearch(); renderFavs(); renderCart(); badges(); }
+
+  function show(v, push) {
+    if (!VALID[v]) v = "home";
+    view = v;
+    var views = document.querySelectorAll(".view");
+    for (var i = 0; i < views.length; i++) views[i].classList.remove("active");
+    $("v-" + v).classList.add("active");
+    var navs = document.querySelectorAll(".nav");
+    for (var j = 0; j < navs.length; j++) navs[j].classList.toggle("active", navs[j].getAttribute("data-go") === v);
+    if (v === "search") renderSearch();
+    if (v === "favs") renderFavs();
+    if (v === "cart") renderCart();
+    badges();
+    window.scrollTo(0, 0);
+    if (push) history.pushState({ v: v }, "", "#" + v);
+  }
+
+  function go(v) { if (v !== view) show(v, true); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-go],[data-cat],[data-fav],[data-add],[data-inc],[data-dec],[data-pay]");
+    if (!t) return;
+
+    if (t.hasAttribute("data-go")) {
+      var v = t.getAttribute("data-go");
+      go(v);
+      if (v === "search") $("q").focus();
+      return;
+    }
+    if (t.hasAttribute("data-cat")) { cat = t.getAttribute("data-cat"); renderHome(); return; }
+    if (t.hasAttribute("data-fav")) {
+      var id = t.getAttribute("data-fav"), i = favs.indexOf(id);
+      if (i > -1) { favs.splice(i, 1); toast("Quitado de favoritos"); } else { favs.push(id); toast("Agregado a favoritos ❤️"); }
+      save("dmkr_favs_v2", favs); renderAll(); return;
+    }
+    if (t.hasAttribute("data-add")) {
+      var a = t.getAttribute("data-add"); cart[a] = (cart[a] || 0) + 1;
+      save("dmkr_cart_v2", cart); badges(); toast("Agregado al carrito 🛒"); return;
+    }
+    if (t.hasAttribute("data-inc")) { cart[t.getAttribute("data-inc")]++; save("dmkr_cart_v2", cart); renderCart(); badges(); return; }
+    if (t.hasAttribute("data-dec")) {
+      var d = t.getAttribute("data-dec"); cart[d]--; if (cart[d] <= 0) delete cart[d];
+      save("dmkr_cart_v2", cart); renderCart(); badges(); return;
+    }
+    if (t.hasAttribute("data-pay")) openCheckout();
+  });
+
+  // ===== Pasarela / datos de envío =====
+  // Cuando tengas el enlace de tu pasarela de pagos, pégalo entre las comillas:
+  var PAYMENT_URL = "";
+  var ckOpen = false;
+
+  function cartTotal() {
+    return Object.keys(cart).reduce(function (s, id) { return s + find(id).price * cart[id]; }, 0);
+  }
+  function openCheckout() {
+    if (!cartCount()) { toast("Tu carrito está vacío"); return; }
+    $("ckTotal").textContent = money(cartTotal()) + " (IVA Incl.)";
+    $("ck").classList.add("open"); ckOpen = true;
+    history.pushState({ v: view, m: 1 }, "", "#pago");
+  }
+  function hideCheckout() { $("ck").classList.remove("open"); ckOpen = false; }
+  function closeCheckout() { if (ckOpen) history.back(); }
+
+  $("ckClose").addEventListener("click", closeCheckout);
+  $("ck").addEventListener("click", function (e) { if (e.target === $("ck")) closeCheckout(); });
+
+  $("ckForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = e.target, data = {};
+    ["nombre","documento","correo","celular","pais","ciudad","postal","direccion","notas"].forEach(function (n) { data[n] = f.elements[n].value.trim(); });
+    var items = Object.keys(cart).map(function (id) { var p = find(id); return { producto: p.name, cantidad: cart[id], precio: p.price }; });
+    save("dmkr_last_order", { cliente: data, items: items, total: cartTotal(), fecha: new Date().toISOString() });
+    if (PAYMENT_URL) {
+      window.open(PAYMENT_URL, "_blank");
+    } else {
+      cart = {}; save("dmkr_cart_v2", cart);
+      closeCheckout(); renderCart(); badges();
+      toast("Datos recibidos. Te contactaremos para coordinar el pago");
+    }
+  });
+
+  $("q").addEventListener("input", function () { if (view !== "search") show("search", true); else renderSearch(); });
+  $("q").addEventListener("keydown", function (e) { if (e.key === "Enter") $("q").blur(); });
+
+  window.addEventListener("popstate", function (e) {
+    if (ckOpen) { hideCheckout(); return; }
+    show((e.state && e.state.v) || "home", false);
+  });
+
+  history.replaceState({ v: "home" }, "", "#home");
+  renderAll();
+  show("home", false);
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function (e) { console.error(e); });
+    });
+  }
+})();
+</script>
+</body>
+</html>
